@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>North Shore Free Deals - Top 10 Resale Value</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        .header {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+        .header h1 {
+            color: #333;
+            margin-bottom: 10px;
+        }
+        .header p {
+            color: #666;
+            font-size: 0.95em;
+        }
+        .deals-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+        }
+        .deal-card {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+        }
+        .deal-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+        }
+        .deal-rank {
+            font-size: 0.85em;
+            color: #999;
+            margin-bottom: 8px;
+        }
+        .deal-title {
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+        .deal-value {
+            font-size: 1.4em;
+            color: #667eea;
+            font-weight: bold;
+            margin-bottom: 8px;
+        }
+        .deal-category {
+            display: inline-block;
+            background: #f0f0f0;
+            color: #666;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            margin-bottom: 15px;
+        }
+        .deal-link {
+            background: #667eea;
+            color: white;
+            padding: 10px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: 500;
+            transition: background 0.2s;
+            margin-top: auto;
+        }
+        .deal-link:hover {
+            background: #764ba2;
+        }
+        .footer {
+            text-align: center;
+            color: white;
+            margin-top: 30px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎁 North Shore Free Deals</h1>
+            <p>Top 10 Craigslist free items with highest resale value (fits in SUV)</p>
+            <p style="margin-top: 10px; color: #999; font-size: 0.85em;">Updated: March 21, 2026 at 14:32 </p>
+        </div>
+        
+        <div class="deals-grid">
+
+            <div style="grid-column: 1/-1; background: white; padding: 40px; border-radius: 10px; text-align: center;">
+                <p style="color: #999; font-size: 1.1em;">No deals found today. Check back later!</p>
+            </div>
+
+        </div>
+        
+        <div class="footer">
+            <p>💡 Estimated resale values based on condition and market demand</p>
+        </div>
+    </div>
+</body>
+</html>
