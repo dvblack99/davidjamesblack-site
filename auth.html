@@ -1,0 +1,244 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackStarr - Login</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #333;
+        }
+        .login-container {
+            background: white;
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            width: 100%;
+            max-width: 400px;
+        }
+        .logo {
+            font-size: 2.5em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #3498db, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            text-align: center;
+            margin-bottom: 10px;
+        }
+        .subtitle {
+            text-align: center;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+            font-size: 0.95em;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .form-label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 8px;
+            color: #2c3e50;
+        }
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ecf0f1;
+            border-radius: 6px;
+            font-size: 0.95em;
+            transition: border-color 0.2s ease;
+        }
+        .form-input:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        .btn-login {
+            width: 100%;
+            background: #3498db;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 10px;
+        }
+        .btn-login:hover {
+            background: #2980b9;
+        }
+        .btn-login:active {
+            transform: translateY(1px);
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 20px;
+            display: none;
+        }
+        .demo-section {
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #ecf0f1;
+        }
+        .demo-title {
+            font-weight: 500;
+            color: #2c3e50;
+            margin-bottom: 12px;
+            font-size: 0.9em;
+        }
+        .demo-btn {
+            display: block;
+            width: 100%;
+            background: #95a5a6;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background 0.2s ease;
+        }
+        .demo-btn:hover {
+            background: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <div class="logo">BlackStarr</div>
+        <p class="subtitle">Household Management System</p>
+
+        <div class="error" id="error"></div>
+
+        <form onsubmit="handleLogin(event)">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" class="form-input" id="username" required autocomplete="username">
+            </div>
+
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" class="form-input" id="password" required autocomplete="current-password">
+            </div>
+
+            <button type="submit" class="btn-login">Login</button>
+        </form>
+
+        <div class="demo-section">
+            <div class="demo-title">Demo Accounts (for testing):</div>
+            <button class="demo-btn" onclick="quickLogin('david', 'davidpass')">Admin: David</button>
+            <button class="demo-btn" onclick="quickLogin('sean', 'seanpass')">Editor: Sean</button>
+            <button class="demo-btn" onclick="quickLogin('josiane', 'josianepass')">Editor: Josiane</button>
+        </div>
+    </div>
+
+    <script>
+        // Initialize demo users on first load
+        function initializeUsers() {
+            if (!localStorage.getItem('users')) {
+                const users = [
+                    {
+                        id: 1,
+                        username: 'david',
+                        password: btoa('davidpass'), // Simple base64 (use proper hashing in production)
+                        role: 'admin',
+                        name: 'David Black',
+                        email: 'david@blackstarr.home'
+                    },
+                    {
+                        id: 2,
+                        username: 'sean',
+                        password: btoa('seanpass'),
+                        role: 'editor',
+                        name: 'Sean',
+                        email: 'sean@blackstarr.home'
+                    },
+                    {
+                        id: 3,
+                        username: 'josiane',
+                        password: btoa('josianepass'),
+                        role: 'editor',
+                        name: 'Josiane',
+                        email: 'josiane@blackstarr.home'
+                    },
+                    {
+                        id: 4,
+                        username: 'lindsey',
+                        password: btoa('lindseypass'),
+                        role: 'editor',
+                        name: 'Lindsey Starr',
+                        email: 'lindsey@blackstarr.home'
+                    },
+                    {
+                        id: 5,
+                        username: 'flora',
+                        password: btoa('florapass'),
+                        role: 'viewer',
+                        name: 'Flora',
+                        email: 'flora@blackstarr.home'
+                    },
+                    {
+                        id: 6,
+                        username: 'lisa',
+                        password: btoa('lisapass'),
+                        role: 'viewer',
+                        name: 'Lisa',
+                        email: 'lisa@blackstarr.home'
+                    }
+                ];
+                localStorage.setItem('users', JSON.stringify(users));
+                localStorage.setItem('currentSession', JSON.stringify(null));
+            }
+        }
+
+        function handleLogin(event) {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            quickLogin(username, password);
+        }
+
+        function quickLogin(username, password) {
+            initializeUsers();
+            const users = JSON.parse(localStorage.getItem('users'));
+            const user = users.find(u => u.username === username && u.password === btoa(password));
+
+            if (user) {
+                const session = {
+                    userId: user.id,
+                    username: user.username,
+                    role: user.role,
+                    name: user.name,
+                    loginTime: new Date().toISOString()
+                };
+                localStorage.setItem('currentSession', JSON.stringify(session));
+                window.location.href = 'index.html';
+            } else {
+                document.getElementById('error').textContent = 'Invalid username or password';
+                document.getElementById('error').style.display = 'block';
+            }
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', initializeUsers);
+    </script>
+</body>
+</html>

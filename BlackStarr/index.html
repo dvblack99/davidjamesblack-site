@@ -1,0 +1,2347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BlackStarr - Household Management</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: var(--bg-body, #f5f7fa);
+            color: var(--text-main, #333);
+            transition: background 0.3s ease, color 0.3s ease;
+        }
+        /* ===== THEME VARIABLES ===== */
+        :root {
+            --bg-body: #f5f7fa;
+            --bg-page: #ffffff;
+            --bg-section: #f8f9fa;
+            --bg-card: #ffffff;
+            --text-main: #333333;
+            --text-muted: #7f8c8d;
+            --text-heading: #2c3e50;
+            --border-color: #dddddd;
+            --modal-bg: rgba(0,0,0,0.5);
+        }
+        body.dark {
+            --bg-body: #1a1a2e;
+            --bg-page: #16213e;
+            --bg-section: #0f3460;
+            --bg-card: #1a1a2e;
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0b0;
+            --text-heading: #e8e8f0;
+            --border-color: #2a2a4a;
+            --modal-bg: rgba(0,0,0,0.75);
+        }
+        /* ===== LOGIN ===== */
+        #loginScreen {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+        }
+        #loginScreen.hidden { display: none; }
+        .login-card {
+            background: white;
+            padding: 50px 40px;
+            border-radius: 16px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        .login-logo {
+            font-size: 2.8em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #3498db, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 8px;
+        }
+        .login-subtitle {
+            color: #7f8c8d;
+            margin-bottom: 35px;
+            font-size: 0.95em;
+        }
+        .login-input {
+            width: 100%;
+            padding: 14px 18px;
+            border: 2px solid #ecf0f1;
+            border-radius: 8px;
+            font-size: 1.1em;
+            margin-bottom: 15px;
+            outline: none;
+            font-family: inherit;
+            text-align: center;
+            transition: border-color 0.2s ease;
+        }
+        .login-input:focus { border-color: #3498db; }
+        .login-btn {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .login-btn:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(52,152,219,0.4); }
+        .login-error {
+            color: #e74c3c;
+            font-size: 0.9em;
+            margin-top: 10px;
+            display: none;
+        }
+        /* ===== LAYOUT ===== */
+        #appWrapper { display: none; }
+        #appWrapper.visible { display: block; }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            padding: 30px 20px;
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            border-radius: 12px;
+            color: white;
+        }
+        .back-btn {
+            background: rgba(255,255,255,0.2);
+            color: white;
+            border: 2px solid white;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 0.95em;
+            transition: background 0.3s ease;
+        }
+        .back-btn:hover { background: rgba(255,255,255,0.3); }
+        .logo {
+            font-size: 3em;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background: linear-gradient(135deg, #3498db, #e74c3c);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            margin-bottom: 10px;
+        }
+        /* ===== TOPBAR ===== */
+        .topbar {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-bottom: 12px;
+            padding: 0 4px;
+        }
+        .topbar-btn {
+            background: var(--bg-page);
+            border: 1.5px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 7px 14px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.85em;
+            transition: all 0.2s ease;
+        }
+        .topbar-btn:hover { border-color: #3498db; color: #3498db; }
+        .topbar-user {
+            background: linear-gradient(135deg, #3498db, #2980b9);
+            color: white;
+            padding: 7px 14px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 500;
+            border: none;
+        }
+        /* ===== NAV GRID ===== */
+        .nav-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .nav-grid-admin {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        .nav-grid-admin.visible { display: grid; }
+        .nav-btn {
+            padding: 40px 20px;
+            background: var(--bg-card);
+            border: 2px solid var(--border-color);
+            border-radius: 10px;
+            font-size: 1.1em;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            min-height: 140px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: var(--text-heading);
+        }
+        .nav-btn:hover {
+            border-color: #3498db;
+            box-shadow: 0 4px 12px rgba(52,152,219,0.3);
+            transform: translateY(-2px);
+        }
+        .nav-btn.admin-btn {
+            border-color: #9b59b6;
+            background: linear-gradient(135deg, rgba(155,89,182,0.08), rgba(142,68,173,0.05));
+        }
+        .nav-btn.admin-btn:hover { border-color: #8e44ad; box-shadow: 0 4px 12px rgba(155,89,182,0.3); }
+        .nav-btn-label { font-size: 0.75em; color: var(--text-muted); margin-top: 4px; font-weight: 400; }
+        /* ===== PAGES ===== */
+        .page {
+            display: none;
+            background: var(--bg-page);
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            min-height: 80vh;
+        }
+        .page.active { display: block; }
+        /* ===== LOCKED SECTION ===== */
+        .locked-overlay {
+            text-align: center;
+            padding: 80px 40px;
+            color: var(--text-muted);
+        }
+        .locked-overlay .lock-icon { font-size: 4em; margin-bottom: 20px; }
+        .locked-overlay h2 { color: var(--text-heading); margin-bottom: 10px; }
+        /* ===== COLLAPSIBLE ===== */
+        .collapsible-section {
+            background: var(--bg-card);
+            margin-bottom: 20px;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .section-header {
+            background: #3498db;
+            color: white;
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.1em;
+            user-select: none;
+            transition: background 0.3s ease;
+        }
+        .section-header:hover { background: #2980b9; }
+        .section-toggle { transition: transform 0.3s ease; font-size: 1.3em; }
+        .section-toggle.open { transform: rotate(180deg); }
+        .section-content {
+            display: none;
+            padding: 20px;
+            background: var(--bg-section);
+            color: var(--text-main);
+        }
+        .section-content.open { display: block; }
+        /* ===== FOOD ===== */
+        .meal-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+        .meal-card {
+            background: var(--bg-card);
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #e74c3c;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .meal-day { font-weight: bold; color: var(--text-heading); margin-bottom: 5px; }
+        .meal-item { color: var(--text-muted); font-size: 0.95em; }
+        .grocery-category { margin-bottom: 20px; }
+        .grocery-category-title { font-weight: bold; color: var(--text-heading); margin-bottom: 10px; font-size: 1.05em; }
+        .grocery-item {
+            padding: 8px 0;
+            background: var(--bg-card);
+            margin-bottom: 5px;
+            padding-left: 10px;
+            border-radius: 3px;
+            border-left: 3px solid #27ae60;
+            font-size: 0.95em;
+            color: var(--text-main);
+        }
+        .inventory {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .inventory-item {
+            background: var(--bg-card);
+            padding: 12px;
+            border-radius: 6px;
+            border-left: 3px solid #95a5a6;
+            font-size: 0.95em;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            color: var(--text-main);
+        }
+        .recipe-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 20px; }
+        .recipe-btn {
+            background: var(--bg-card);
+            border: 2px solid #f39c12;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .recipe-btn:hover { border-color: #e67e22; box-shadow: 0 4px 12px rgba(243,156,18,0.3); transform: translateY(-2px); }
+        .recipe-name { font-weight: bold; color: var(--text-heading); font-size: 1.05em; margin-bottom: 8px; }
+        .recipe-meta { font-size: 0.85em; color: var(--text-muted); }
+        .recipe-page { display: none; }
+        .recipe-page.active { display: block; }
+        .recipe-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #f39c12; }
+        .recipe-title { font-size: 2em; color: var(--text-heading); margin-bottom: 10px; }
+        .recipe-meta-info { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 15px; }
+        .recipe-meta-item { background: var(--bg-section); padding: 10px; border-radius: 6px; border-left: 3px solid #f39c12; }
+        .recipe-meta-label { font-size: 0.85em; color: var(--text-muted); }
+        .recipe-meta-value { font-weight: bold; color: var(--text-heading); }
+        .recipe-section { margin-bottom: 30px; }
+        .recipe-section-title { font-size: 1.3em; font-weight: bold; color: var(--text-heading); margin-bottom: 15px; border-left: 4px solid #f39c12; padding-left: 15px; }
+        .recipe-ingredient { padding: 8px 0; padding-left: 20px; position: relative; color: var(--text-main); }
+        .recipe-ingredient:before { content: "✓"; position: absolute; left: 0; color: #27ae60; font-weight: bold; }
+        .recipe-step { background: var(--bg-section); padding: 15px; margin-bottom: 10px; border-radius: 6px; border-left: 4px solid #3498db; color: var(--text-main); }
+        .recipe-step-number { font-weight: bold; color: #3498db; margin-bottom: 8px; }
+        /* ===== FAMILY ===== */
+        .family-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 20px; }
+        .family-member-btn {
+            background: var(--bg-card);
+            border: 2px solid #e67e22;
+            padding: 20px;
+            border-radius: 8px;
+            cursor: pointer;
+            text-align: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .family-member-btn:hover { border-color: #d35400; box-shadow: 0 4px 12px rgba(230,126,34,0.3); transform: translateY(-2px); }
+        .member-emoji { font-size: 2.5em; margin-bottom: 10px; }
+        .member-name { font-weight: bold; color: var(--text-heading); font-size: 1.05em; }
+        .member-role { font-size: 0.85em; color: var(--text-muted); margin-top: 5px; }
+        .member-detail-page { display: none; }
+        .member-detail-page.active { display: block; }
+        .member-detail-header { margin-bottom: 30px; padding-bottom: 20px; border-bottom: 3px solid #e67e22; }
+        .member-info-section { margin: 25px 0; padding: 20px; background: var(--bg-section); border-radius: 8px; border-left: 4px solid #e67e22; }
+        .info-title { font-weight: bold; color: var(--text-heading); margin-bottom: 10px; font-size: 1.1em; }
+        .info-content { color: var(--text-muted); line-height: 1.8; }
+        /* ===== PROJECTS ===== */
+        .projects-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 20px; }
+        .project-card {
+            background: var(--bg-section);
+            padding: 20px;
+            border-radius: 8px;
+            border-left: 4px solid #9b59b6;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            user-select: none;
+            color: var(--text-main);
+        }
+        .project-card:hover { box-shadow: 0 4px 12px rgba(155,89,182,0.3); transform: translateY(-2px); background: var(--bg-card); }
+        .project-title { font-weight: bold; color: var(--text-heading); margin-bottom: 8px; }
+        .project-status { font-size: 0.85em; color: var(--text-muted); margin-bottom: 10px; }
+        /* ===== TODOS ===== */
+        .todo-item {
+            background: var(--bg-section);
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 6px;
+            border-left: 4px solid #95a5a6;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: grab;
+            user-select: none;
+            transition: all 0.2s ease;
+            touch-action: none;
+        }
+        .todo-item:active { cursor: grabbing; }
+        .todo-item:hover { box-shadow: 0 2px 8px rgba(0,0,0,0.1); background: var(--bg-card); }
+        .todo-item.in-progress { background: #ffeaa7; border-left-color: #f39c12; }
+        .todo-item.completed { background: #d4edda; border-left-color: #27ae60; opacity: 0.75; }
+        .todo-item.dragging { opacity: 0.5; transform: scale(0.98); }
+        .todo-checkbox { width: 22px; height: 22px; cursor: pointer; flex-shrink: 0; accent-color: #3498db; }
+        .todo-content { flex-grow: 1; min-width: 0; }
+        .todo-text { font-weight: 500; color: var(--text-heading); margin-bottom: 4px; }
+        .todo-category { font-size: 0.85em; color: var(--text-muted); }
+        .todo-actions { display: flex; gap: 8px; opacity: 0; transition: opacity 0.2s ease; flex-shrink: 0; }
+        .todo-item:hover .todo-actions { opacity: 1; }
+        .action-btn { background: none; border: none; cursor: pointer; font-size: 1.2em; padding: 4px 8px; border-radius: 4px; transition: all 0.2s ease; }
+        .action-btn:hover { background: rgba(0,0,0,0.1); }
+        .todo-completed-section { margin-top: 30px; padding-top: 20px; border-top: 2px solid #ecf0f1; }
+        .todo-completed-title { font-size: 0.95em; font-weight: bold; color: var(--text-muted); margin-bottom: 15px; text-transform: uppercase; letter-spacing: 1px; }
+        /* ===== CALENDAR ===== */
+        .calendar-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 15px; margin-top: 20px; }
+        .calendar-day { background: var(--bg-section); padding: 15px; border-radius: 8px; border-top: 3px solid #3498db; }
+        .day-name { font-weight: bold; color: var(--text-heading); margin-bottom: 8px; }
+        .day-events { font-size: 0.9em; color: var(--text-muted); line-height: 1.6; }
+        /* ===== MODALS ===== */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: var(--modal-bg);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        .modal.active { display: flex; }
+        .modal-content {
+            background: var(--bg-page);
+            padding: 30px;
+            border-radius: 10px;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            color: var(--text-main);
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+        .modal-content.wide { max-width: 700px; }
+        .modal-close { float: right; font-size: 1.5em; cursor: pointer; color: var(--text-muted); background: none; border: none; padding: 0; transition: color 0.2s ease; }
+        .modal-close:hover { color: var(--text-heading); }
+        .modal-title { font-size: 1.4em; font-weight: bold; color: var(--text-heading); margin-bottom: 20px; clear: both; }
+        .form-group { margin-bottom: 20px; }
+        .form-label { display: block; font-weight: 500; margin-bottom: 8px; color: var(--text-heading); }
+        .edit-textarea {
+            width: 100%; min-height: 100px; padding: 12px;
+            border: 2px solid var(--border-color); border-radius: 6px;
+            font-family: inherit; font-size: 0.95em; resize: vertical;
+            background: var(--bg-section); color: var(--text-main);
+            transition: border-color 0.2s ease;
+        }
+        .edit-textarea:focus { outline: none; border-color: #3498db; }
+        .edit-input {
+            width: 100%; padding: 10px 12px;
+            border: 2px solid var(--border-color); border-radius: 6px;
+            font-family: inherit; font-size: 0.95em;
+            background: var(--bg-section); color: var(--text-main);
+            transition: border-color 0.2s ease;
+        }
+        .edit-input:focus { outline: none; border-color: #3498db; }
+        .edit-select {
+            width: 100%; padding: 10px 12px;
+            border: 2px solid var(--border-color); border-radius: 6px;
+            font-family: inherit; font-size: 0.95em;
+            background: var(--bg-section); color: var(--text-main);
+        }
+        .modal-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
+        .btn { background: #3498db; color: white; padding: 10px 20px; border: none; border-radius: 6px; cursor: pointer; font-size: 0.95em; font-weight: 500; transition: all 0.2s ease; }
+        .btn:hover { background: #2980b9; transform: translateY(-1px); }
+        .btn:active { transform: translateY(0); }
+        .btn-delete { background: #e74c3c; }
+        .btn-delete:hover { background: #c0392b; }
+        .btn-cancel { background: #95a5a6; }
+        .btn-cancel:hover { background: #7f8c8d; }
+        .btn-success { background: #27ae60; }
+        .btn-success:hover { background: #229954; }
+        .btn-purple { background: #9b59b6; }
+        .btn-purple:hover { background: #8e44ad; }
+        .btn-sm { padding: 6px 12px; font-size: 0.85em; }
+        /* ===== JOURNAL (ADMIN) ===== */
+        .journal-entries { }
+        .journal-entry {
+            background: var(--bg-section);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            border-left: 4px solid #3498db;
+            position: relative;
+        }
+        .journal-entry-meta { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+        .journal-entry-date { font-weight: bold; color: var(--text-heading); }
+        .journal-entry-mood { font-size: 1.4em; }
+        .journal-entry-text { color: var(--text-muted); line-height: 1.7; }
+        .journal-entry-actions { position: absolute; top: 15px; right: 15px; display: flex; gap: 6px; opacity: 0; transition: opacity 0.2s; }
+        .journal-entry:hover .journal-entry-actions { opacity: 1; }
+        .mood-grid { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 8px; }
+        .mood-btn {
+            padding: 8px 12px;
+            border: 2px solid var(--border-color);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 1.3em;
+            background: var(--bg-card);
+            transition: all 0.2s ease;
+        }
+        .mood-btn:hover, .mood-btn.selected { border-color: #3498db; background: rgba(52,152,219,0.1); }
+        /* ===== IDEAS BOARD (ADMIN) ===== */
+        .kanban-board { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .kanban-column { background: var(--bg-section); border-radius: 10px; padding: 15px; min-height: 300px; }
+        .kanban-column-title {
+            font-weight: bold;
+            color: var(--text-heading);
+            font-size: 1.05em;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .kanban-card {
+            background: var(--bg-card);
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+            border-left: 3px solid #9b59b6;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+        }
+        .kanban-card:hover { box-shadow: 0 4px 12px rgba(0,0,0,0.15); transform: translateY(-1px); }
+        .kanban-card-title { font-weight: 500; color: var(--text-heading); margin-bottom: 5px; }
+        .kanban-card-desc { font-size: 0.85em; color: var(--text-muted); }
+        .kanban-card-actions { position: absolute; top: 8px; right: 8px; display: flex; gap: 4px; opacity: 0; transition: opacity 0.2s; }
+        .kanban-card:hover .kanban-card-actions { opacity: 1; }
+        .kanban-add-btn {
+            width: 100%; padding: 8px; background: none;
+            border: 2px dashed var(--border-color); border-radius: 8px;
+            color: var(--text-muted); cursor: pointer; font-size: 0.9em;
+            transition: all 0.2s ease; margin-top: 5px;
+        }
+        .kanban-add-btn:hover { border-color: #9b59b6; color: #9b59b6; }
+        /* ===== GOALS TRACKER (ADMIN) ===== */
+        .goal-card {
+            background: var(--bg-section);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border-left: 4px solid #27ae60;
+        }
+        .goal-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 12px; }
+        .goal-title { font-weight: bold; color: var(--text-heading); font-size: 1.1em; }
+        .goal-category { font-size: 0.8em; color: white; background: #27ae60; padding: 3px 8px; border-radius: 10px; }
+        .goal-progress-bar { background: var(--border-color); border-radius: 10px; height: 10px; margin: 12px 0; overflow: hidden; }
+        .goal-progress-fill { height: 100%; background: linear-gradient(90deg, #27ae60, #2ecc71); border-radius: 10px; transition: width 0.4s ease; }
+        .goal-milestones { margin-top: 12px; }
+        .goal-milestone {
+            display: flex; align-items: center; gap: 10px;
+            padding: 8px 0; border-bottom: 1px solid var(--border-color);
+            font-size: 0.9em; color: var(--text-muted);
+        }
+        .goal-milestone:last-child { border-bottom: none; }
+        .goal-milestone input[type="checkbox"] { accent-color: #27ae60; width: 16px; height: 16px; cursor: pointer; }
+        .goal-milestone.done span { text-decoration: line-through; opacity: 0.6; }
+        .goal-actions { display: flex; gap: 8px; margin-top: 12px; }
+        .goals-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 20px; }
+        /* ===== GIFT IDEAS & ACTION ITEMS (on family pages) ===== */
+        .gift-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #e74c3c;
+        }
+        .gift-item .gift-text { flex-grow: 1; color: var(--text-main); }
+        .gift-item .gift-priority { font-size: 0.75em; padding: 2px 8px; border-radius: 10px; color: white; }
+        .gift-priority.high { background: #e74c3c; }
+        .gift-priority.medium { background: #f39c12; }
+        .gift-priority.low { background: #95a5a6; }
+        .action-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 10px;
+            background: var(--bg-card);
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border-left: 3px solid #3498db;
+        }
+        .action-item.done { opacity: 0.6; }
+        .action-item input[type="checkbox"] { accent-color: #3498db; width: 16px; height: 16px; cursor: pointer; flex-shrink: 0; }
+        .action-item .action-text { flex-grow: 1; color: var(--text-main); }
+        .action-item.done .action-text { text-decoration: line-through; }
+        /* ===== ADMIN DASHBOARD ===== */
+        .admin-section { margin-bottom: 30px; }
+        .admin-section-title { font-size: 1.2em; font-weight: bold; color: var(--text-heading); margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--border-color); }
+        .lock-row {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 15px;
+            background: var(--bg-section);
+            border-radius: 8px;
+            margin-bottom: 8px;
+        }
+        .lock-row-label { font-weight: 500; color: var(--text-heading); }
+        .toggle-switch { position: relative; display: inline-block; width: 50px; height: 26px; }
+        .toggle-switch input { opacity: 0; width: 0; height: 0; }
+        .toggle-slider {
+            position: absolute; cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #27ae60; border-radius: 26px;
+            transition: 0.3s;
+        }
+        .toggle-slider:before {
+            position: absolute; content: "";
+            height: 20px; width: 20px; left: 3px; bottom: 3px;
+            background-color: white; border-radius: 50%;
+            transition: 0.3s;
+        }
+        .toggle-switch input:checked + .toggle-slider { background-color: #e74c3c; }
+        .toggle-switch input:checked + .toggle-slider:before { transform: translateX(24px); }
+        .lock-hint { font-size: 0.8em; color: var(--text-muted); }
+        .activity-log {
+            background: var(--bg-section);
+            border-radius: 8px;
+            padding: 15px;
+            max-height: 350px;
+            overflow-y: auto;
+        }
+        .activity-entry {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.9em;
+            display: flex;
+            gap: 12px;
+            color: var(--text-muted);
+        }
+        .activity-entry:last-child { border-bottom: none; }
+        .activity-time { color: #3498db; font-weight: 500; white-space: nowrap; flex-shrink: 0; }
+        /* ===== MISC ===== */
+        .badge {
+            display: inline-block;
+            background: #e74c3c;
+            color: white;
+            font-size: 0.7em;
+            padding: 1px 6px;
+            border-radius: 10px;
+            vertical-align: top;
+            margin-left: 4px;
+        }
+        .admin-only-tag {
+            font-size: 0.65em;
+            background: rgba(155,89,182,0.15);
+            color: #9b59b6;
+            border: 1px solid rgba(155,89,182,0.3);
+            padding: 2px 7px;
+            border-radius: 10px;
+            font-weight: normal;
+            margin-left: 8px;
+        }
+        .section-divider {
+            border: none;
+            border-top: 2px dashed var(--border-color);
+            margin: 25px 0;
+        }
+        .confetti { position: fixed; pointer-events: none; z-index: 9999; }
+        .add-row { display: flex; gap: 10px; margin-bottom: 15px; }
+        .add-row .edit-input { flex-grow: 1; }
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--text-muted); font-size: 0.95em; }
+        .empty-state .empty-icon { font-size: 3em; margin-bottom: 10px; }
+        @media (max-width: 768px) {
+            .nav-grid { grid-template-columns: repeat(2, 1fr); }
+            .nav-grid-admin { grid-template-columns: repeat(2, 1fr); }
+            .kanban-board { grid-template-columns: 1fr; }
+            .goals-grid { grid-template-columns: 1fr; }
+            .todo-actions { opacity: 1; }
+            .logo { font-size: 2em; }
+        }
+        @media (max-width: 480px) {
+            .nav-grid { grid-template-columns: repeat(2, 1fr); }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== LOGIN SCREEN ===== -->
+    <div id="loginScreen">
+        <div class="login-card">
+            <div class="login-logo">BlackStarr</div>
+            <div class="login-subtitle">Household Management System</div>
+            <input type="text" id="loginName" class="login-input" placeholder="Enter your first name…" autocomplete="off" autofocus />
+            <button class="login-btn" onclick="doLogin()">Enter</button>
+            <div id="loginError" class="login-error">Name not recognised. Try again.</div>
+        </div>
+    </div>
+
+    <!-- ===== APP ===== -->
+    <div id="appWrapper">
+        <div class="container">
+
+            <!-- TOPBAR -->
+            <div class="topbar">
+                <span class="topbar-user" id="topbarUser">👤 —</span>
+                <button class="topbar-btn" onclick="toggleTheme()" id="themeBtn">🌙 Dark</button>
+                <button class="topbar-btn" onclick="doLogout()">🚪 Logout</button>
+            </div>
+
+            <!-- ===== HOME PAGE ===== -->
+            <div id="homepage" class="page active">
+                <div class="header">
+                    <div class="logo">BlackStarr</div>
+                    <p>Household Management System</p>
+                </div>
+
+                <!-- Standard 5 nav buttons -->
+                <div class="nav-grid">
+                    <button class="nav-btn" onclick="goToPage('food')">🍽️<br><small>Food</small></button>
+                    <button class="nav-btn" onclick="goToPage('projects')">🔨<br><small>Projects</small></button>
+                    <button class="nav-btn" onclick="goToPage('todos')">✅<br><small>To-Do's</small></button>
+                    <button class="nav-btn" onclick="goToPage('calendar')">📅<br><small>Calendar</small></button>
+                    <button class="nav-btn" onclick="goToPage('family')">👨‍👩‍👧‍👦<br><small>Family</small></button>
+                </div>
+
+                <!-- Admin-only row -->
+                <div class="nav-grid-admin" id="adminNavGrid">
+                    <button class="nav-btn admin-btn" onclick="goToPage('journal')">📓<br><small>Journal</small><div class="nav-btn-label">Admin only</div></button>
+                    <button class="nav-btn admin-btn" onclick="goToPage('ideas')">💡<br><small>Ideas Board</small><div class="nav-btn-label">Admin only</div></button>
+                    <button class="nav-btn admin-btn" onclick="goToPage('goals')">🎯<br><small>Goals</small><div class="nav-btn-label">Admin only</div></button>
+                    <button class="nav-btn admin-btn" onclick="goToPage('adminDash')">🔐<br><small>Admin</small><div class="nav-btn-label">Dashboard</div></button>
+                </div>
+            </div>
+
+            <!-- ===== FOOD PAGE ===== -->
+            <div id="food" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">🍽️ Food</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="foodLockedMsg" class="locked-overlay" style="display:none;">
+                    <div class="lock-icon">🔒</div>
+                    <h2>Section Locked</h2>
+                    <p>This section has been locked by an administrator.</p>
+                </div>
+                <div id="foodContent">
+                    <div class="collapsible-section">
+                        <div class="section-header" onclick="toggleSection(this)">
+                            <span>📅 Weekly Meal Plan</span>
+                            <span class="section-toggle">▼</span>
+                        </div>
+                        <div class="section-content">
+                            <div class="meal-grid">
+                                <div class="meal-card"><div class="meal-day">Friday</div><div class="meal-item">Hamburgers</div></div>
+                                <div class="meal-card"><div class="meal-day">Saturday</div><div class="meal-item">Leftovers / Student Cooking</div></div>
+                                <div class="meal-card"><div class="meal-day">Sunday</div><div class="meal-item">Roast</div></div>
+                                <div class="meal-card"><div class="meal-day">Monday</div><div class="meal-item">Pasta</div></div>
+                                <div class="meal-card"><div class="meal-day">Tuesday</div><div class="meal-item">Tacos</div></div>
+                                <div class="meal-card"><div class="meal-day">Wednesday</div><div class="meal-item">Soup</div></div>
+                                <div class="meal-card"><div class="meal-day">Thursday</div><div class="meal-item">Chicken &amp; Vegetables</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="collapsible-section">
+                        <div class="section-header" onclick="toggleSection(this)"><span>🛒 Grocery List</span><span class="section-toggle">▼</span></div>
+                        <div class="section-content" id="groceryList"></div>
+                    </div>
+                    <div class="collapsible-section">
+                        <div class="section-header" onclick="toggleSection(this)"><span>📦 Kitchen Inventory</span><span class="section-toggle">▼</span></div>
+                        <div class="section-content" id="inventory"></div>
+                    </div>
+                    <div class="collapsible-section">
+                        <div class="section-header" onclick="toggleSection(this)"><span>👨‍🍳 Recipes</span><span class="section-toggle">▼</span></div>
+                        <div class="section-content">
+                            <div class="recipe-grid" id="recipeGrid"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- RECIPE PAGES -->
+            <div id="recipePages"></div>
+
+            <!-- ===== PROJECTS PAGE ===== -->
+            <div id="projects" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">🔨 Projects</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="projectsLockedMsg" class="locked-overlay" style="display:none;">
+                    <div class="lock-icon">🔒</div><h2>Section Locked</h2><p>This section has been locked by an administrator.</p>
+                </div>
+                <div id="projectsContent">
+                    <div class="projects-grid" id="projectsGrid"></div>
+                </div>
+            </div>
+
+            <!-- ===== TO-DO PAGE ===== -->
+            <div id="todos" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">✅ To-Do's</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="todosLockedMsg" class="locked-overlay" style="display:none;">
+                    <div class="lock-icon">🔒</div><h2>Section Locked</h2><p>This section has been locked by an administrator.</p>
+                </div>
+                <div id="todosContent">
+                    <div id="todosList"></div>
+                    <div style="margin-top:20px;">
+                        <button class="btn btn-success btn-sm" onclick="showAddTodoModal()">+ Add Task</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== CALENDAR PAGE ===== -->
+            <div id="calendar" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">📅 Calendar</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="calendarLockedMsg" class="locked-overlay" style="display:none;">
+                    <div class="lock-icon">🔒</div><h2>Section Locked</h2><p>This section has been locked by an administrator.</p>
+                </div>
+                <div id="calendarContent">
+                    <div class="calendar-grid" id="calendarGrid"></div>
+                </div>
+            </div>
+
+            <!-- ===== FAMILY PAGE ===== -->
+            <div id="family" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">👨‍👩‍👧‍👦 Family</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="familyLockedMsg" class="locked-overlay" style="display:none;">
+                    <div class="lock-icon">🔒</div><h2>Section Locked</h2><p>This section has been locked by an administrator.</p>
+                </div>
+                <div id="familyContent">
+                    <div class="family-grid" id="familyGrid"></div>
+                </div>
+            </div>
+
+            <!-- FAMILY MEMBER PAGES -->
+            <div id="memberPages"></div>
+
+            <!-- ===== JOURNAL PAGE (ADMIN) ===== -->
+            <div id="journal" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">📓 Journal</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <div style="color:var(--text-muted);font-size:0.9em;">Your private journal — visible to admins only.</div>
+                    <button class="btn btn-sm" onclick="showAddJournalModal()">+ New Entry</button>
+                </div>
+                <div id="journalEntries" class="journal-entries"></div>
+            </div>
+
+            <!-- ===== IDEAS BOARD PAGE (ADMIN) ===== -->
+            <div id="ideas" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">💡 Ideas Board</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div id="kanbanBoard" class="kanban-board"></div>
+            </div>
+
+            <!-- ===== GOALS PAGE (ADMIN) ===== -->
+            <div id="goals" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">🎯 Goals</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">
+                    <div style="color:var(--text-muted);font-size:0.9em;">Track family goals and milestones.</div>
+                    <button class="btn btn-success btn-sm" onclick="showAddGoalModal()">+ New Goal</button>
+                </div>
+                <div id="goalsGrid" class="goals-grid"></div>
+            </div>
+
+            <!-- ===== ADMIN DASHBOARD ===== -->
+            <div id="adminDash" class="page">
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">🔐 Admin</div>
+                        <button class="back-btn" onclick="goToPage('homepage')">← Back</button>
+                    </div>
+                </div>
+
+                <div class="admin-section">
+                    <div class="admin-section-title">💾 Data Backup & Sync</div>
+                    <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:15px;">Back up your household data to the server. Auto-sync enabled.</p>
+                    <button class="btn btn-primary" onclick="manualSyncToServer()" style="margin-right:10px;">↻ Sync Now</button>
+                    <button class="btn btn-secondary" onclick="downloadStateAsJSON()">⬇️ Download JSON</button>
+                    <div id="syncStatus" style="margin-top:10px;font-size:0.9em;color:var(--text-muted);"></div>
+                </div>
+
+                <div class="admin-section">
+                    <div class="admin-section-title">🔒 Section Locks</div>
+                    <p style="color:var(--text-muted);font-size:0.9em;margin-bottom:15px;">Lock sections so family members see a locked message instead of the content.</p>
+                    <div id="sectionLocksPanel"></div>
+                </div>
+
+                <div class="admin-section">
+                    <div class="admin-section-title">📊 Activity Log</div>
+                    <div style="display:flex;justify-content:space-between;margin-bottom:10px;">
+                        <div style="color:var(--text-muted);font-size:0.9em;">Recent app activity.</div>
+                        <button class="btn btn-cancel btn-sm" onclick="clearActivityLog()">Clear</button>
+                    </div>
+                    <div id="activityLogPanel" class="activity-log"></div>
+                </div>
+            </div>
+
+        </div><!-- /container -->
+    </div><!-- /appWrapper -->
+
+    <!-- ===== MODALS ===== -->
+
+    <!-- Edit Todo Modal -->
+    <div id="editTodoModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editTodoModal')">✕</button>
+            <div class="modal-title">Edit Task</div>
+            <div class="form-group">
+                <label class="form-label">Task Description</label>
+                <textarea id="editTodoText" class="edit-textarea"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('editTodoModal')">Cancel</button>
+                <button class="btn btn-delete" onclick="deleteTodoFromEdit()">Delete</button>
+                <button class="btn" onclick="saveEditTodo()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Todo Modal -->
+    <div id="addTodoModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addTodoModal')">✕</button>
+            <div class="modal-title">Add Task</div>
+            <div class="form-group">
+                <label class="form-label">Task Description</label>
+                <input type="text" id="newTodoText" class="edit-input" placeholder="What needs to be done?">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" id="newTodoCategory" class="edit-input" placeholder="e.g. Cleaning, Yard, Shopping…">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select id="newTodoPriority" class="edit-select">
+                    <option value="High">High</option>
+                    <option value="Medium" selected>Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addTodoModal')">Cancel</button>
+                <button class="btn btn-success" onclick="addTodo()">Add Task</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div id="deleteConfirmModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-title">Delete Task?</div>
+            <p style="margin-bottom:20px;color:var(--text-muted);line-height:1.6;">Are you sure you want to delete this task? This cannot be undone.</p>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('deleteConfirmModal')">Cancel</button>
+                <button class="btn btn-delete" onclick="confirmDelete()">Delete</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Project Detail Modal -->
+    <div id="projectModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('projectModal')">✕</button>
+            <div id="projectModalContent"></div>
+        </div>
+    </div>
+
+    <!-- Calendar Event Modal -->
+    <div id="calendarEventModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('calendarEventModal')">✕</button>
+            <div id="calendarEventContent"></div>
+        </div>
+    </div>
+
+    <!-- Add Journal Entry Modal -->
+    <div id="addJournalModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addJournalModal')">✕</button>
+            <div class="modal-title" id="journalModalTitle">New Journal Entry</div>
+            <div class="form-group">
+                <label class="form-label">Date</label>
+                <input type="date" id="journalDate" class="edit-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Mood</label>
+                <div class="mood-grid" id="moodGrid">
+                    <button class="mood-btn" onclick="selectMood('😊')" data-mood="😊">😊</button>
+                    <button class="mood-btn" onclick="selectMood('😄')" data-mood="😄">😄</button>
+                    <button class="mood-btn" onclick="selectMood('😐')" data-mood="😐">😐</button>
+                    <button class="mood-btn" onclick="selectMood('😔')" data-mood="😔">😔</button>
+                    <button class="mood-btn" onclick="selectMood('😤')" data-mood="😤">😤</button>
+                    <button class="mood-btn" onclick="selectMood('😴')" data-mood="😴">😴</button>
+                    <button class="mood-btn" onclick="selectMood('🤩')" data-mood="🤩">🤩</button>
+                    <button class="mood-btn" onclick="selectMood('😰')" data-mood="😰">😰</button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Entry</label>
+                <textarea id="journalText" class="edit-textarea" placeholder="Write your thoughts…" style="min-height:140px;"></textarea>
+            </div>
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addJournalModal')">Cancel</button>
+                <button class="btn" onclick="saveJournalEntry()">Save Entry</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Idea Modal -->
+    <div id="addIdeaModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addIdeaModal')">✕</button>
+            <div class="modal-title">New Idea</div>
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" id="newIdeaTitle" class="edit-input" placeholder="Idea title…">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="newIdeaDesc" class="edit-textarea" placeholder="More detail (optional)…" style="min-height:80px;"></textarea>
+            </div>
+            <input type="hidden" id="newIdeaColumn" value="ideas">
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addIdeaModal')">Cancel</button>
+                <button class="btn btn-purple" onclick="saveIdea()">Add Idea</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Idea Modal -->
+    <div id="editIdeaModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('editIdeaModal')">✕</button>
+            <div class="modal-title">Edit Idea</div>
+            <div class="form-group">
+                <label class="form-label">Title</label>
+                <input type="text" id="editIdeaTitle" class="edit-input">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea id="editIdeaDesc" class="edit-textarea" style="min-height:80px;"></textarea>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Move to column</label>
+                <select id="editIdeaColumn" class="edit-select">
+                    <option value="ideas">💡 Ideas</option>
+                    <option value="exploring">🔍 Exploring</option>
+                    <option value="doing">🚀 Doing</option>
+                </select>
+            </div>
+            <input type="hidden" id="editIdeaId" value="">
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('editIdeaModal')">Cancel</button>
+                <button class="btn btn-delete" onclick="deleteIdea()">Delete</button>
+                <button class="btn btn-purple" onclick="updateIdea()">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Goal Modal -->
+    <div id="addGoalModal" class="modal">
+        <div class="modal-content wide">
+            <button class="modal-close" onclick="closeModal('addGoalModal')">✕</button>
+            <div class="modal-title" id="goalModalTitle">New Goal</div>
+            <div class="form-group">
+                <label class="form-label">Goal Title</label>
+                <input type="text" id="goalTitle" class="edit-input" placeholder="e.g. Get fit for summer">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Category</label>
+                <input type="text" id="goalCategory" class="edit-input" placeholder="e.g. Health, Finance, Family…">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Milestones (one per line)</label>
+                <textarea id="goalMilestones" class="edit-textarea" placeholder="First milestone&#10;Second milestone&#10;Third milestone…"></textarea>
+            </div>
+            <input type="hidden" id="goalEditId" value="">
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addGoalModal')">Cancel</button>
+                <button class="btn btn-success" onclick="saveGoal()">Save Goal</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Gift Idea Modal -->
+    <div id="addGiftModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addGiftModal')">✕</button>
+            <div class="modal-title">Add Gift Idea</div>
+            <div class="form-group">
+                <label class="form-label">Gift Idea</label>
+                <input type="text" id="newGiftText" class="edit-input" placeholder="e.g. Guitar picks set, Book about…">
+            </div>
+            <div class="form-group">
+                <label class="form-label">Priority</label>
+                <select id="newGiftPriority" class="edit-select">
+                    <option value="high">High</option>
+                    <option value="medium" selected>Medium</option>
+                    <option value="low">Low</option>
+                </select>
+            </div>
+            <input type="hidden" id="giftMemberId" value="">
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addGiftModal')">Cancel</button>
+                <button class="btn" onclick="saveGiftIdea()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Action Item Modal -->
+    <div id="addActionModal" class="modal">
+        <div class="modal-content">
+            <button class="modal-close" onclick="closeModal('addActionModal')">✕</button>
+            <div class="modal-title">Add Action Item</div>
+            <div class="form-group">
+                <label class="form-label">Action</label>
+                <input type="text" id="newActionText" class="edit-input" placeholder="e.g. Book swimming lesson, Call school…">
+            </div>
+            <input type="hidden" id="actionMemberId" value="">
+            <div class="modal-buttons">
+                <button class="btn btn-cancel" onclick="closeModal('addActionModal')">Cancel</button>
+                <button class="btn btn-success" onclick="saveActionItem()">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    // =====================================================================
+    // DATA
+    // =====================================================================
+    const ADMINS = ['david', 'lindsey'];
+    const KNOWN_USERS = ['david', 'lindsey', 'sean', 'josiane', 'flora', 'lisa', 'marilyn'];
+
+    const data = {
+        groceries: [
+            { category: 'Produce 🥬🍅🍌🍎', items: ['Broccoli', 'Scallions', 'Iceberg lettuce', 'Tomatoes', 'Limes', 'Cilantro', 'Apples', 'Bananas', 'Cauliflower', 'Peppers', 'Carrots', 'Red onion'] },
+            { category: 'Meat / Deli 🍗🥩', items: ['Sandwich meat for Sean', 'Sandwich meat for Flora', 'Pepperoni sticks'] },
+            { category: 'Dairy / Refrigerated 🥛🧀', items: ['Milk', 'Eggs', 'Cheddar cheese', 'Mozzarella cheese', 'Butter', 'Yogurts', 'Soy milk', 'Cheese sticks', 'Skyr', 'Provolone cheese'] },
+            { category: 'Bakery 🍞', items: ['Tortillas', 'Bread', 'Naan', 'Hamburger buns'] },
+            { category: 'Frozen ❄️', items: ['Frozen French fries', 'Frozen pizzas', 'Frozen cannelloni', 'Frozen garlic bread'] },
+            { category: 'Pantry 🥫', items: ['Worcestershire sauce', 'Crushed tomatoes', 'Tomato sauce', 'Steel cut oats', 'Garlic powder', 'Rice', 'Tomato paste', 'Black beans', 'Raisins', 'Chicken stock', 'Panko bread crumbs'] },
+            { category: 'Drinks 🧃', items: ['Juice boxes', 'Pink lemonade'] },
+            { category: 'Beverages ☕', items: ['Whole bean coffee'] },
+            { category: 'Household 🧼', items: ['Dish detergent'] }
+        ],
+        inventory: ['Pasta','Rice','Flour','Sugar','Eggs','Milk','Butter','Olive Oil','Garlic powder','Onions','Salt & Pepper','Cheddar Cheese','Mozzarella Cheese','Provolone Cheese','Bread','Tortillas','Hamburger buns','Naan','Broccoli','Scallions','Lettuce','Tomatoes','Limes','Cilantro','Apples','Bananas','Cauliflower','Bell Peppers','Carrots','Red Onion','Yogurts','Soy milk','Cheese sticks','Skyr','Frozen French fries','Frozen pizzas','Frozen cannelloni','Frozen garlic bread','Worcestershire sauce','Crushed tomatoes','Steel cut oats','Tomato paste','Black beans','Raisins','Chicken stock','Panko bread crumbs','Juice boxes','Pink lemonade','Coffee beans','Dish detergent'],
+        recipes: [
+            { id: 1, name: 'Tacos', servings: '6 tacos', time: '20 minutes', difficulty: 'Easy', ingredients: ['1 lb Ground Beef or Turkey','1 packet Taco Seasoning','6 Tortillas','Shredded Cheese','Lettuce','Tomatoes','Sour Cream','Cilantro'], steps: [{num:1,text:'Heat oil in a large skillet over medium-high heat.'},{num:2,text:'Add ground meat and cook until browned, breaking it up as it cooks (about 5-7 minutes). Drain excess fat.'},{num:3,text:'Add taco seasoning and water according to packet instructions. Simmer for 2 minutes.'},{num:4,text:'Warm tortillas in a separate skillet or over flame.'},{num:5,text:'Assemble tacos with meat and desired toppings.'},{num:6,text:'Serve immediately with cilantro, lime, and sour cream.'}] },
+            { id: 2, name: 'Spaghetti Pasta', servings: '4-6 servings', time: '30 minutes', difficulty: 'Easy', ingredients: ['1 lb Penne Pasta','24 oz Tomato Sauce','3 cloves Garlic (minced)','2 tbsp Olive Oil','Salt & Pepper','Fresh Basil (optional)','Parmesan Cheese'], steps: [{num:1,text:'Bring a large pot of salted water to a boil.'},{num:2,text:'Add pasta and cook according to package directions. Drain and set aside.'},{num:3,text:'Heat olive oil in another pot. Add minced garlic and sauté for 1 minute until fragrant.'},{num:4,text:'Pour in tomato sauce and stir well. Simmer for 10-15 minutes.'},{num:5,text:'Season with salt and pepper to taste.'},{num:6,text:'Combine pasta and sauce, garnish with fresh basil and parmesan cheese.'}] },
+            { id: 3, name: 'Roast Chicken with Vegetables', servings: '4-6 servings', time: '90 minutes', difficulty: 'Medium', ingredients: ['1 whole Chicken (4-5 lbs)','Carrots','Bell Peppers','Onions','Olive Oil','Salt, Pepper, Garlic Powder','Fresh Herbs (rosemary, thyme)'], steps: [{num:1,text:'Preheat oven to 425°F (220°C).'},{num:2,text:'Pat chicken dry and place in a roasting pan. Chop vegetables into large pieces.'},{num:3,text:'Arrange vegetables around the chicken. Drizzle everything with olive oil.'},{num:4,text:'Season chicken and vegetables with salt, pepper, garlic powder, and fresh herbs.'},{num:5,text:'Roast for 60-75 minutes until chicken is golden and internal temp reaches 165°F.'},{num:6,text:'Rest for 10 minutes before carving and serving.'}] },
+            { id: 4, name: 'Hamburgers', servings: '4 burgers', time: '15 minutes', difficulty: 'Easy', ingredients: ['1 lb Ground Beef','Hamburger Buns','Cheese (optional)','Lettuce','Tomatoes','Onion','Condiments'], steps: [{num:1,text:'Divide ground beef into 4 equal portions. Form into patties with a thumbprint in the center.'},{num:2,text:'Heat a skillet or grill to medium-high heat. Cook patties for 3-4 minutes per side.'},{num:3,text:'Add cheese (if desired) in the last minute of cooking and cover to melt.'},{num:4,text:'Toast buns if desired.'},{num:5,text:'Assemble burgers with patty, toppings, and condiments.'},{num:6,text:'Serve immediately with fries or salad.'}] }
+        ],
+        projects: [
+            { id:1, title:'Roof Inspection & Potential Replacement', status:'Pending', dueDate:'May 2026', budget:'$12,000-$15,000', spent:'$0', description:'House built in 1974 - roof may be nearing end of life. Professional inspection required.', details:'Original roof likely 25-30+ years old. Need inspection to determine if repair or full replacement needed.' },
+            { id:2, title:'Deck Staining & Sealing', status:'Scheduled', dueDate:'May 1, 2026', budget:'$1,200', spent:'$0', description:'Pressure wash and restain the back deck.', details:'Deck showing weather wear. Schedule professional staining service.' },
+            { id:3, title:'Garage Door Opener Repair', status:'Completed', dueDate:'March 10, 2026', budget:'$500', spent:'$475', description:'Repair garage door opener and springs.', details:'Door opener replaced, springs lubricated and tested.' },
+            { id:4, title:'Vinyl Siding Repair & Caulking', status:'In Progress', dueDate:'April 30, 2026', budget:'$2,500', spent:'$800', description:'Inspect and repair deteriorating vinyl siding.', details:'Some cracked and loose panels on north side.' },
+            { id:5, title:'Foundation Sealing & Waterproofing', status:'Research', dueDate:'June 2026', budget:'$3,000-$5,000', spent:'$0', description:'Inspect basement for cracks and water intrusion.', details:'Older homes in Lynn Valley can have moisture issues.' },
+            { id:6, title:'Gutter Cleaning & Inspection', status:'Scheduled', dueDate:'April 2026', budget:'$400', spent:'$0', description:'Clean gutters and downspouts.', details:'Twice yearly cleaning recommended.' },
+            { id:7, title:'HVAC System Service & Maintenance', status:'Pending', dueDate:'May 2026', budget:'$800-$1,200', spent:'$0', description:'Professional HVAC inspection, filter replacement.', details:'Furnace and AC system need annual maintenance.' },
+            { id:8, title:'Water Heater Inspection', status:'Research', dueDate:'July 2026', budget:'$1,500-$2,500', spent:'$0', description:'Inspect water heater for age and condition.', details:'Typical lifespan is 10-15 years.' },
+            { id:9, title:'Window Caulking & Weatherstripping', status:'Scheduled', dueDate:'April 2026', budget:'$600', spent:'$0', description:'Re-caulk windows and replace weatherstripping.', details:'Older homes lose heat through windows.' },
+            { id:10, title:'Chimney Inspection & Sweep', status:'Pending', dueDate:'September 2026', budget:'$400-$600', spent:'$0', description:'Professional chimney inspection and cleaning.', details:'If fireplace is used, professional sweep required annually.' },
+            { id:11, title:'Exterior Paint & Caulk Refresh', status:'Planning', dueDate:'Summer 2026', budget:'$4,000-$6,000', spent:'$0', description:'Repaint exterior trim, fascia, and soffits.', details:'50-year-old house needs regular paint maintenance.' },
+            { id:12, title:'Landscaping & Yard Work', status:'Ongoing', dueDate:'Spring/Summer 2026', budget:'$1,500-$2,000', spent:'$0', description:'Trim trees, remove dead branches, mulch beds.', details:'Regular maintenance prevents damage to roof and gutters.' },
+            { id:13, title:'Basement Insulation & Vapor Barrier', status:'Research', dueDate:'Fall 2026', budget:'$2,000-$3,500', spent:'$0', description:'Add/upgrade insulation in basement walls.', details:'Older homes often under-insulated.' },
+            { id:14, title:'Electrical Panel Inspection', status:'Pending', dueDate:'May 2026', budget:'$500', spent:'$0', description:'Licensed electrician inspection of electrical panel.', details:'Older homes may have outdated panels or aluminum wiring.' }
+        ],
+        todos: [
+            { id:1, text:'Organize kitchen pantry', category:'Cleaning', priority:'High', status:'pending' },
+            { id:2, text:'Laundry - sheets and towels', category:'Laundry', priority:'Medium', status:'pending' },
+            { id:3, text:'Yard work - mow lawn', category:'Yard', priority:'High', status:'pending' },
+            { id:4, text:'Clean out refrigerator', category:'Cleaning', priority:'Medium', status:'pending' },
+            { id:5, text:'Vacuum living room carpet', category:'Cleaning', priority:'Low', status:'pending' },
+            { id:6, text:'Water plants', category:'Yard', priority:'Low', status:'pending' }
+        ],
+        familyMembers: [
+            { id:1, name:'David', role:'Father', emoji:'👨', bio:'Marine engineer. Speaks French, enjoys music and outdoor activities.', details:{ age:'~45', occupation:'Marine Engineer', languages:'English, French', hobbies:'Cycling, hiking, jogging, swimming', music:'Sings in choir' } },
+            { id:2, name:'Lindsey', role:'Mother', emoji:'👩', bio:'Works for Ministry of Justice. Enjoys reading and family time.', details:{ age:'~45', occupation:'Ministry of Justice', hobbies:'Reading, cycling, hiking' } },
+            { id:3, name:'Sean', role:'Son', emoji:'👦', bio:'Creative 15-year-old musician with autism. Non-verbal, communicates with pictures.', details:{ age:'15 (Oct 6, 2010)', specialNeeds:'Autism, non-verbal', instruments:'Guitar, banjo, trumpet, piano', hobbies:'Music, horseback riding, swimming' } },
+            { id:4, name:'Josiane', role:'Daughter', emoji:'👧', bio:'Energetic 12-year-old volleyball player and Minecraft enthusiast.', details:{ age:'12 (Oct 6, 2013)', hobbies:'Volleyball, swimming, Minecraft', personality:'High energy, very active' } },
+            { id:5, name:'Marilyn', role:'Grandmother', emoji:'👵', bio:'Retired teacher, actively involved in family support.', details:{ age:'~70', occupation:'Retired Teacher', residence:'North Vancouver', support:'Visits several times weekly' } },
+            { id:6, name:'Flora', role:'Exchange Student', emoji:'🌍', bio:'Exchange student from Austria, age 16.', details:{} },
+            { id:7, name:'Lisa', role:'Exchange Student', emoji:'🌍', bio:'Exchange student from Italy, age 18.', details:{} }
+        ],
+        calendar: {
+            monday: [
+                { name:'Josiane Piano Lesson', time:'4:00 PM', description:'Weekly piano lesson for Josiane with her instructor' },
+                { name:'Dinner: Pasta', time:'6:00 PM', description:'Penne pasta with tomato sauce and fresh basil' }
+            ],
+            tuesday: [
+                { name:'Dentist Appointment', time:'2:00 PM', description:'Regular dental checkup for family member' },
+                { name:'Dinner: Tacos', time:'6:00 PM', description:'Ground beef or turkey tacos with all the toppings' }
+            ],
+            wednesday: [
+                { name:'Library', time:'3:30 PM', description:'Visit to the local library - book pickup and browsing' },
+                { name:'Dinner: Soup', time:'6:00 PM', description:'Homemade soup - recipe and ingredients vary' }
+            ],
+            thursday: [
+                { name:'Team Meeting', time:'7:00 PM', description:'Work meeting (Mr. Black)' },
+                { name:'Dinner: Chicken & Vegetables', time:'6:00 PM', description:'Roasted chicken with seasonal vegetables' }
+            ],
+            friday: [
+                { name:'Grocery Shopping', time:'9:00 AM', description:'Weekly grocery shopping at Superstore - main shopping day for the week' },
+                { name:'Dinner: Hamburgers', time:'6:00 PM', description:'Fresh hamburgers with cheese, lettuce, tomato and condiments' }
+            ],
+            saturday: [
+                { name:"Sean's Soccer Game", time:'10:00 AM', description:"Sean's youth soccer game - family attends to support" },
+                { name:'Dinner: Leftovers', time:'6:00 PM', description:'Leftovers from previous meals or student cooking experiment' }
+            ],
+            sunday: [
+                { name:'Aquarium with Sean', time:'2:00 PM', description:'Visit to aquarium with Sean, meeting choir friends Bernard, Joannah & Everett' },
+                { name:'Family Dinner', time:'6:00 PM', description:'Family dinner time together' },
+                { name:'Dinner: Roast', time:'6:00 PM', description:'Sunday roast with vegetables - traditional family meal' }
+            ]
+        }
+    };
+
+    // =====================================================================
+    // STATE (localStorage-backed)
+    // =====================================================================
+    let state = {
+        currentUser: null,
+        isAdmin: false,
+        darkMode: false,
+        journal: [],
+        ideas: { ideas: [], exploring: [], doing: [] },
+        goals: [],
+        giftIdeas: {},    // { memberId: [{id, text, priority}] }
+        actionItems: {},  // { memberId: [{id, text, done}] }
+        sectionLocks: { food: false, projects: false, todos: false, calendar: false, family: false },
+        activityLog: []
+    };
+
+    function loadState() {
+        try {
+            const saved = localStorage.getItem('blackstarr_state');
+            if (saved) {
+                const parsed = JSON.parse(saved);
+                state = Object.assign(state, parsed);
+            }
+        } catch(e) {}
+    }
+
+    function saveState() {
+        try { localStorage.setItem('blackstarr_state', JSON.stringify(state)); } catch(e) {}
+        syncStateToServer(); // Background sync
+    }
+
+    function syncStateToServer() {
+        // Auto-sync to server endpoint (non-blocking)
+        fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+        }).catch(err => {
+            // Silently fail if server is unavailable
+            console.log('ℹ️ Server sync unavailable (local copy saved)');
+        });
+    }
+
+    function manualSyncToServer() {
+        // Manual sync with user feedback
+        fetch('/api/sync', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(state)
+        })
+        .then(r => r.json())
+        .then(data => {
+            alert('✅ Data synced to server\n' + data.timestamp);
+            logActivity('Manual sync to server');
+        })
+        .catch(err => {
+            alert('❌ Sync failed: ' + err.message + '\n(Local copy saved)');
+        });
+    }
+
+    function downloadStateAsJSON() {
+        // Download current state as JSON file
+        const dataStr = JSON.stringify(state, null, 2);
+        const blob = new Blob([dataStr], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = `blackstarr-backup-${new Date().toISOString().split('T')[0]}.json`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+        logActivity('Downloaded backup JSON');
+    }
+
+    function logActivity(msg) {
+        const now = new Date();
+        const time = now.toLocaleDateString('en-CA') + ' ' + now.toLocaleTimeString('en-CA', { hour:'2-digit', minute:'2-digit' });
+        state.activityLog.unshift({ time, msg, user: state.currentUser || 'unknown' });
+        if (state.activityLog.length > 100) state.activityLog = state.activityLog.slice(0, 100);
+        saveState();
+    }
+
+    // =====================================================================
+    // AUTH
+    // =====================================================================
+    loadState();
+
+    function doLogin() {
+        const name = document.getElementById('loginName').value.trim().toLowerCase();
+        if (!name) return;
+        if (!KNOWN_USERS.includes(name)) {
+            document.getElementById('loginError').style.display = 'block';
+            return;
+        }
+        state.currentUser = name;
+        state.isAdmin = ADMINS.includes(name);
+        saveState();
+        logActivity(`${capitalise(name)} logged in`);
+        document.getElementById('loginError').style.display = 'none';
+        enterApp();
+    }
+
+    document.getElementById('loginName').addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') doLogin();
+    });
+
+    function doLogout() {
+        logActivity(`${capitalise(state.currentUser)} logged out`);
+        state.currentUser = null;
+        state.isAdmin = false;
+        saveState();
+        document.getElementById('appWrapper').classList.remove('visible');
+        document.getElementById('loginScreen').classList.remove('hidden');
+        document.getElementById('loginName').value = '';
+        goToPage('homepage');
+    }
+
+    function enterApp() {
+        document.getElementById('loginScreen').classList.add('hidden');
+        document.getElementById('appWrapper').classList.add('visible');
+        const displayName = capitalise(state.currentUser);
+        document.getElementById('topbarUser').textContent = '👤 ' + displayName + (state.isAdmin ? ' 🔐' : '');
+        // show/hide admin nav
+        if (state.isAdmin) {
+            document.getElementById('adminNavGrid').classList.add('visible');
+        } else {
+            document.getElementById('adminNavGrid').classList.remove('visible');
+        }
+        // apply saved theme
+        if (state.darkMode) {
+            document.body.classList.add('dark');
+            document.getElementById('themeBtn').textContent = '☀️ Light';
+        } else {
+            document.body.classList.remove('dark');
+            document.getElementById('themeBtn').textContent = '🌙 Dark';
+        }
+        goToPage('homepage');
+    }
+
+    // If already logged in from previous session, go straight in
+    if (state.currentUser && KNOWN_USERS.includes(state.currentUser)) {
+        enterApp();
+    }
+
+    function capitalise(s) { return s ? s.charAt(0).toUpperCase() + s.slice(1) : ''; }
+
+    // =====================================================================
+    // THEME
+    // =====================================================================
+    function toggleTheme() {
+        state.darkMode = !state.darkMode;
+        if (state.darkMode) {
+            document.body.classList.add('dark');
+            document.getElementById('themeBtn').textContent = '☀️ Light';
+        } else {
+            document.body.classList.remove('dark');
+            document.getElementById('themeBtn').textContent = '🌙 Dark';
+        }
+        saveState();
+    }
+
+    // =====================================================================
+    // PAGE NAVIGATION
+    // =====================================================================
+    let draggedItem = null;
+    let editingTodoId = null;
+    let deletingTodoId = null;
+
+    function goToPage(pageId) {
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.recipe-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.member-detail-page').forEach(p => p.classList.remove('active'));
+        const el = document.getElementById(pageId);
+        if (el) el.classList.add('active');
+        window.scrollTo(0, 0);
+
+        if (pageId === 'food') renderFood();
+        else if (pageId === 'projects') renderProjects();
+        else if (pageId === 'todos') renderTodos();
+        else if (pageId === 'calendar') renderCalendar();
+        else if (pageId === 'family') renderFamilyGrid();
+        else if (pageId === 'journal' && state.isAdmin) renderJournal();
+        else if (pageId === 'ideas' && state.isAdmin) renderKanban();
+        else if (pageId === 'goals' && state.isAdmin) renderGoals();
+        else if (pageId === 'adminDash' && state.isAdmin) renderAdminDash();
+    }
+
+    function checkLock(section) {
+        return state.sectionLocks[section] && !state.isAdmin;
+    }
+
+    function applyLock(section, lockMsgId, contentId) {
+        const locked = checkLock(section);
+        document.getElementById(lockMsgId).style.display = locked ? 'block' : 'none';
+        document.getElementById(contentId).style.display = locked ? 'none' : 'block';
+    }
+
+    // =====================================================================
+    // FOOD
+    // =====================================================================
+    function renderFood() {
+        applyLock('food', 'foodLockedMsg', 'foodContent');
+        if (checkLock('food')) return;
+        renderGroceries();
+        renderInventory();
+        renderRecipes();
+    }
+
+    function renderGroceries() {
+        const list = document.getElementById('groceryList');
+        list.innerHTML = data.groceries.map(cat => `
+            <div class="grocery-category">
+                <div class="grocery-category-title">${cat.category}</div>
+                ${cat.items.map(item => `<div class="grocery-item">• ${item}</div>`).join('')}
+            </div>
+        `).join('');
+    }
+
+    function renderInventory() {
+        const inv = document.getElementById('inventory');
+        inv.innerHTML = `<div class="inventory">${data.inventory.map(item => `<div class="inventory-item">✓ ${item}</div>`).join('')}</div>`;
+    }
+
+    function renderRecipes() {
+        const grid = document.getElementById('recipeGrid');
+        grid.innerHTML = data.recipes.map(r => `
+            <div class="recipe-btn" onclick="showRecipe(${r.id})">
+                <div class="recipe-name">${r.name}</div>
+                <div class="recipe-meta">
+                    <div>⏱️ ${r.time}</div>
+                    <div>👥 ${r.servings}</div>
+                    <div>📊 ${r.difficulty}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showRecipe(recipeId) {
+        const recipe = data.recipes.find(r => r.id === recipeId);
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.recipe-page').forEach(p => p.classList.remove('active'));
+        let recipePage = document.getElementById(`recipe-${recipeId}`);
+        if (!recipePage) {
+            recipePage = document.createElement('div');
+            recipePage.id = `recipe-${recipeId}`;
+            recipePage.className = 'page recipe-page';
+            recipePage.innerHTML = `
+                <div class="header">
+                    <div style="display:flex;justify-content:space-between;align-items:center;">
+                        <div class="logo" style="margin-bottom:0;font-size:2em;">👨‍🍳 ${recipe.name}</div>
+                        <button class="back-btn" onclick="goToPage('food')">← Back</button>
+                    </div>
+                </div>
+                <div class="recipe-header">
+                    <div class="recipe-title">${recipe.name}</div>
+                    <div class="recipe-meta-info">
+                        <div class="recipe-meta-item"><div class="recipe-meta-label">⏱️ Time</div><div class="recipe-meta-value">${recipe.time}</div></div>
+                        <div class="recipe-meta-item"><div class="recipe-meta-label">👥 Servings</div><div class="recipe-meta-value">${recipe.servings}</div></div>
+                        <div class="recipe-meta-item"><div class="recipe-meta-label">📊 Difficulty</div><div class="recipe-meta-value">${recipe.difficulty}</div></div>
+                    </div>
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-section-title">Ingredients</div>
+                    ${recipe.ingredients.map(ing => `<div class="recipe-ingredient">${ing}</div>`).join('')}
+                </div>
+                <div class="recipe-section">
+                    <div class="recipe-section-title">Instructions</div>
+                    ${recipe.steps.map(step => `<div class="recipe-step"><div class="recipe-step-number">Step ${step.num}</div><div>${step.text}</div></div>`).join('')}
+                </div>
+            `;
+            document.getElementById('recipePages').appendChild(recipePage);
+        }
+        recipePage.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // =====================================================================
+    // PROJECTS
+    // =====================================================================
+    function renderProjects() {
+        applyLock('projects', 'projectsLockedMsg', 'projectsContent');
+        if (checkLock('projects')) return;
+        const grid = document.getElementById('projectsGrid');
+        grid.innerHTML = data.projects.map(p => `
+            <div class="project-card" onclick="showProject(${p.id})">
+                <div class="project-title">${p.title}</div>
+                <div class="project-status">Status: ${p.status}</div>
+                <div style="font-size:0.85em;color:var(--text-muted);">
+                    <div>Due: ${p.dueDate}</div>
+                    <div>Budget: ${p.budget}</div>
+                    <div>Spent: ${p.spent}</div>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showProject(projectId) {
+        const project = data.projects.find(p => p.id === projectId);
+        if (!project) return;
+        const content = document.getElementById('projectModalContent');
+        content.innerHTML = `
+            <div class="modal-title">${project.title}</div>
+            <div style="margin-bottom:20px;">
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Status:</strong> ${project.status}</div>
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Due Date:</strong> ${project.dueDate}</div>
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Budget:</strong> ${project.budget}</div>
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Amount Spent:</strong> ${project.spent}</div>
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Description:</strong><p style="margin-top:8px;color:var(--text-muted);">${project.description}</p></div>
+                <div><strong style="color:#3498db;">Details:</strong><p style="margin-top:8px;color:var(--text-muted);">${project.details}</p></div>
+            </div>
+            <div style="text-align:right;"><button class="btn" onclick="closeModal('projectModal')">Close</button></div>
+        `;
+        document.getElementById('projectModal').classList.add('active');
+    }
+
+    // =====================================================================
+    // TODOS
+    // =====================================================================
+    function renderTodos() {
+        applyLock('todos', 'todosLockedMsg', 'todosContent');
+        if (checkLock('todos')) return;
+        const list = document.getElementById('todosList');
+        const pending = data.todos.filter(t => t.status !== 'completed');
+        const completed = data.todos.filter(t => t.status === 'completed');
+
+        let html = '<div id="todoList">';
+        pending.forEach(todo => {
+            const statusClass = todo.status === 'in-progress' ? 'in-progress' : '';
+            html += `
+                <div class="todo-item ${statusClass}" data-id="${todo.id}" draggable="true"
+                     ondragstart="dragStart(event)" ondragover="dragOver(event)"
+                     ondrop="dragDrop(event)" ondragend="dragEnd(event)">
+                    <input type="checkbox" class="todo-checkbox" onchange="toggleTodoState(${todo.id})" ${todo.status !== 'pending' ? 'checked' : ''}>
+                    <div class="todo-content">
+                        <div class="todo-text">${todo.text}</div>
+                        <div class="todo-category">${todo.category} • ${todo.priority}</div>
+                    </div>
+                    <div class="todo-actions">
+                        <button class="action-btn" onclick="editTodo(${todo.id})" title="Edit">✎</button>
+                        <button class="action-btn" onclick="promptDelete(${todo.id})" title="Delete">🗑️</button>
+                    </div>
+                </div>
+            `;
+        });
+        html += '</div>';
+
+        if (completed.length > 0) {
+            html += '<div class="todo-completed-section"><div class="todo-completed-title">✓ Completed</div><div id="completedTodoList">';
+            completed.forEach(todo => {
+                html += `
+                    <div class="todo-item completed" data-id="${todo.id}">
+                        <input type="checkbox" class="todo-checkbox" onchange="toggleTodoState(${todo.id})" checked>
+                        <div class="todo-content">
+                            <div class="todo-text">${todo.text}</div>
+                            <div class="todo-category">${todo.category} • ${todo.priority}</div>
+                        </div>
+                        <div class="todo-actions">
+                            <button class="action-btn" onclick="promptDelete(${todo.id})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            });
+            html += '</div></div>';
+        }
+        list.innerHTML = html;
+    }
+
+    function toggleTodoState(id) {
+        const todo = data.todos.find(t => t.id === id);
+        if (todo.status === 'pending') { todo.status = 'in-progress'; }
+        else if (todo.status === 'in-progress') {
+            todo.status = 'completed';
+            logActivity(`Task completed: "${todo.text}"`);
+            playCompletionSound();
+            createConfetti();
+        } else if (todo.status === 'completed') { todo.status = 'pending'; }
+        renderTodos();
+    }
+
+    function showAddTodoModal() {
+        document.getElementById('newTodoText').value = '';
+        document.getElementById('newTodoCategory').value = '';
+        document.getElementById('newTodoPriority').value = 'Medium';
+        document.getElementById('addTodoModal').classList.add('active');
+        setTimeout(() => document.getElementById('newTodoText').focus(), 100);
+    }
+
+    function addTodo() {
+        const text = document.getElementById('newTodoText').value.trim();
+        const category = document.getElementById('newTodoCategory').value.trim() || 'General';
+        const priority = document.getElementById('newTodoPriority').value;
+        if (!text) return;
+        const newId = Math.max(0, ...data.todos.map(t => t.id)) + 1;
+        data.todos.push({ id: newId, text, category, priority, status: 'pending' });
+        logActivity(`Task added: "${text}"`);
+        closeModal('addTodoModal');
+        renderTodos();
+    }
+
+    function editTodo(id) {
+        editingTodoId = id;
+        const todo = data.todos.find(t => t.id === id);
+        document.getElementById('editTodoText').value = todo.text;
+        document.getElementById('editTodoModal').classList.add('active');
+    }
+
+    function saveEditTodo() {
+        const todo = data.todos.find(t => t.id === editingTodoId);
+        const newText = document.getElementById('editTodoText').value.trim();
+        if (newText) {
+            todo.text = newText;
+            closeModal('editTodoModal');
+            editingTodoId = null;
+            renderTodos();
+        }
+    }
+
+    function deleteTodoFromEdit() {
+        deletingTodoId = editingTodoId;
+        closeModal('editTodoModal');
+        editingTodoId = null;
+        document.getElementById('deleteConfirmModal').classList.add('active');
+    }
+
+    function promptDelete(id) {
+        deletingTodoId = id;
+        document.getElementById('deleteConfirmModal').classList.add('active');
+    }
+
+    function confirmDelete() {
+        data.todos = data.todos.filter(t => t.id !== deletingTodoId);
+        deletingTodoId = null;
+        closeModal('deleteConfirmModal');
+        renderTodos();
+    }
+
+    // Drag & Drop
+    function dragStart(e) { draggedItem = e.currentTarget; e.currentTarget.classList.add('dragging'); }
+    function dragOver(e) { e.preventDefault(); }
+    function dragDrop(e) {
+        e.preventDefault();
+        if (!draggedItem || draggedItem === e.currentTarget) return;
+        const todoList = e.currentTarget.parentNode;
+        const allItems = [...todoList.querySelectorAll('.todo-item')];
+        const draggedIndex = allItems.indexOf(draggedItem);
+        const targetIndex = allItems.indexOf(e.currentTarget);
+        if (draggedIndex < targetIndex) e.currentTarget.parentNode.insertBefore(draggedItem, e.currentTarget.nextSibling);
+        else e.currentTarget.parentNode.insertBefore(draggedItem, e.currentTarget);
+    }
+    function dragEnd(e) { e.currentTarget.classList.remove('dragging'); draggedItem = null; }
+
+    function playCompletionSound() {
+        try {
+            const ac = new (window.AudioContext || window.webkitAudioContext)();
+            [523.25, 659.25, 783.99].forEach((freq, i) => {
+                const osc = ac.createOscillator();
+                const gain = ac.createGain();
+                osc.connect(gain); gain.connect(ac.destination);
+                osc.frequency.value = freq;
+                gain.gain.setValueAtTime(0.3, ac.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, ac.currentTime + 0.3);
+                osc.start(ac.currentTime + i * 0.1);
+                osc.stop(ac.currentTime + i * 0.1 + 0.3);
+            });
+        } catch(e) {}
+    }
+
+    function createConfetti() {
+        for (let i = 0; i < 30; i++) {
+            const c = document.createElement('div');
+            c.className = 'confetti';
+            c.textContent = ['🎉','✨','🎊','⭐'][Math.floor(Math.random() * 4)];
+            c.style.left = Math.random() * window.innerWidth + 'px';
+            c.style.top = '-10px';
+            c.style.fontSize = (Math.random() * 20 + 20) + 'px';
+            document.body.appendChild(c);
+            let top = -10;
+            const speed = Math.random() * 3 + 2;
+            const duration = Math.random() * 1000 + 1500;
+            const start = Date.now();
+            const animate = () => {
+                const progress = (Date.now() - start) / duration;
+                top += speed;
+                c.style.top = top + 'px';
+                c.style.opacity = 1 - progress;
+                if (progress < 1) requestAnimationFrame(animate);
+                else c.remove();
+            };
+            animate();
+        }
+    }
+
+    // =====================================================================
+    // CALENDAR
+    // =====================================================================
+    function renderCalendar() {
+        applyLock('calendar', 'calendarLockedMsg', 'calendarContent');
+        if (checkLock('calendar')) return;
+        const grid = document.getElementById('calendarGrid');
+        const days = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'];
+        grid.innerHTML = days.map(day => `
+            <div class="calendar-day">
+                <div class="day-name">${day}</div>
+                <div class="day-events">
+                    ${data.calendar[day.toLowerCase()].map((e, idx) => `
+                        <div onclick="showCalendarEvent('${day.toLowerCase()}', ${idx})" style="cursor:pointer;padding:4px 0 4px 4px;border-radius:3px;transition:background 0.2s;" onmouseover="this.style.background='rgba(52,152,219,0.15)'" onmouseout="this.style.background=''">
+                            • ${e.name}
+                        </div>
+                    `).join('')}
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showCalendarEvent(day, eventIdx) {
+        const event = data.calendar[day][eventIdx];
+        const content = document.getElementById('calendarEventContent');
+        content.innerHTML = `
+            <div class="modal-title">${event.name}</div>
+            <div style="margin-bottom:20px;">
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Time:</strong> ${event.time}</div>
+                <div style="margin-bottom:12px;"><strong style="color:#3498db;">Day:</strong> ${day.charAt(0).toUpperCase() + day.slice(1)}</div>
+                <div><strong style="color:#3498db;">Details:</strong><p style="margin-top:8px;color:var(--text-muted);">${event.description}</p></div>
+            </div>
+            <div style="text-align:right;"><button class="btn" onclick="closeModal('calendarEventModal')">Close</button></div>
+        `;
+        document.getElementById('calendarEventModal').classList.add('active');
+    }
+
+    // =====================================================================
+    // FAMILY
+    // =====================================================================
+    function renderFamilyGrid() {
+        applyLock('family', 'familyLockedMsg', 'familyContent');
+        if (checkLock('family')) return;
+        const grid = document.getElementById('familyGrid');
+        grid.innerHTML = data.familyMembers.map(m => `
+            <div class="family-member-btn" onclick="showFamilyMember(${m.id})">
+                <div class="member-emoji">${m.emoji}</div>
+                <div class="member-name">${m.name}</div>
+                <div class="member-role">${m.role}</div>
+            </div>
+        `).join('');
+    }
+
+    function showFamilyMember(memberId) {
+        const member = data.familyMembers.find(m => m.id === memberId);
+        document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.recipe-page').forEach(p => p.classList.remove('active'));
+        document.querySelectorAll('.member-detail-page').forEach(p => p.classList.remove('active'));
+
+        // Always re-create the member page so admin sections are up to date
+        let memberPage = document.getElementById(`member-${memberId}`);
+        if (memberPage) memberPage.remove();
+
+        memberPage = document.createElement('div');
+        memberPage.id = `member-${memberId}`;
+        memberPage.className = 'page member-detail-page';
+
+        let detailsHtml = `<div class="member-info-section"><div class="info-content">${member.bio}</div></div>`;
+        if (Object.keys(member.details).length > 0) {
+            for (const [key, value] of Object.entries(member.details)) {
+                const label = key.charAt(0).toUpperCase() + key.slice(1).replace(/([A-Z])/g, ' $1');
+                detailsHtml += `<div class="member-info-section"><div class="info-title">${label}</div><div class="info-content">${value}</div></div>`;
+            }
+        }
+
+        // Admin-only: Gift Ideas & Action Items
+        let adminHtml = '';
+        if (state.isAdmin) {
+            const gifts = state.giftIdeas[memberId] || [];
+            const actions = state.actionItems[memberId] || [];
+            adminHtml = `
+                <hr class="section-divider">
+                <div class="member-info-section" style="border-left-color:#e74c3c;">
+                    <div class="info-title" style="display:flex;justify-content:space-between;align-items:center;">
+                        🎁 Gift Ideas <span class="admin-only-tag">admin only</span>
+                        <button class="btn btn-sm" style="background:#e74c3c;" onclick="showAddGiftModal(${memberId})">+ Add</button>
+                    </div>
+                    <div id="giftList-${memberId}" style="margin-top:12px;">
+                        ${gifts.length === 0
+                            ? '<div class="empty-state" style="padding:15px;"><div>No gift ideas yet.</div></div>'
+                            : gifts.map(g => `
+                                <div class="gift-item">
+                                    <div class="gift-text">${escHtml(g.text)}</div>
+                                    <span class="gift-priority ${g.priority}">${g.priority}</span>
+                                    <button class="action-btn" style="opacity:0.6;" onclick="removeGiftIdea(${memberId}, '${g.id}')">🗑️</button>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                </div>
+                <div class="member-info-section" style="border-left-color:#3498db;">
+                    <div class="info-title" style="display:flex;justify-content:space-between;align-items:center;">
+                        ✅ Action Items <span class="admin-only-tag">admin only</span>
+                        <button class="btn btn-sm" onclick="showAddActionModal(${memberId})">+ Add</button>
+                    </div>
+                    <div id="actionList-${memberId}" style="margin-top:12px;">
+                        ${actions.length === 0
+                            ? '<div class="empty-state" style="padding:15px;"><div>No action items yet.</div></div>'
+                            : actions.map(a => `
+                                <div class="action-item ${a.done ? 'done' : ''}">
+                                    <input type="checkbox" ${a.done ? 'checked' : ''} onchange="toggleActionItem(${memberId}, '${a.id}')">
+                                    <div class="action-text">${escHtml(a.text)}</div>
+                                    <button class="action-btn" style="opacity:0.6;" onclick="removeActionItem(${memberId}, '${a.id}')">🗑️</button>
+                                </div>
+                            `).join('')
+                        }
+                    </div>
+                </div>
+            `;
+        }
+
+        memberPage.innerHTML = `
+            <div class="header">
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <div style="font-size:3em;margin-right:20px;">${member.emoji}</div>
+                    <div style="flex-grow:1;"><div class="logo" style="margin-bottom:0;font-size:2em;">${member.name}</div></div>
+                    <button class="back-btn" onclick="goToPage('family')">← Back</button>
+                </div>
+            </div>
+            <div class="member-detail-header"><div style="font-size:1.2em;color:var(--text-muted);">${member.role}</div></div>
+            ${detailsHtml}
+            ${adminHtml}
+        `;
+        document.getElementById('memberPages').appendChild(memberPage);
+        memberPage.classList.add('active');
+        window.scrollTo(0, 0);
+    }
+
+    // =====================================================================
+    // JOURNAL (ADMIN)
+    // =====================================================================
+    let selectedMood = '';
+    let editingJournalId = null;
+
+    function renderJournal() {
+        const container = document.getElementById('journalEntries');
+        const entries = [...state.journal].sort((a, b) => b.date.localeCompare(a.date));
+        if (entries.length === 0) {
+            container.innerHTML = '<div class="empty-state"><div class="empty-icon">📓</div><div>No entries yet. Write your first entry!</div></div>';
+            return;
+        }
+        container.innerHTML = entries.map(e => `
+            <div class="journal-entry" id="je-${e.id}">
+                <div class="journal-entry-meta">
+                    <div class="journal-entry-date">${formatDate(e.date)}</div>
+                    <div class="journal-entry-mood">${e.mood || ''}</div>
+                </div>
+                <div class="journal-entry-text">${escHtml(e.text).replace(/\n/g, '<br>')}</div>
+                <div class="journal-entry-actions">
+                    <button class="action-btn" onclick="editJournalEntry('${e.id}')" title="Edit">✎</button>
+                    <button class="action-btn" onclick="deleteJournalEntry('${e.id}')" title="Delete">🗑️</button>
+                </div>
+            </div>
+        `).join('');
+    }
+
+    function showAddJournalModal(editId) {
+        editingJournalId = editId || null;
+        selectedMood = '';
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        const today = new Date().toISOString().split('T')[0];
+        if (editId) {
+            const entry = state.journal.find(e => e.id === editId);
+            document.getElementById('journalModalTitle').textContent = 'Edit Entry';
+            document.getElementById('journalDate').value = entry.date;
+            document.getElementById('journalText').value = entry.text;
+            selectedMood = entry.mood || '';
+            const mb = document.querySelector(`.mood-btn[data-mood="${selectedMood}"]`);
+            if (mb) mb.classList.add('selected');
+        } else {
+            document.getElementById('journalModalTitle').textContent = 'New Journal Entry';
+            document.getElementById('journalDate').value = today;
+            document.getElementById('journalText').value = '';
+        }
+        document.getElementById('addJournalModal').classList.add('active');
+        setTimeout(() => document.getElementById('journalText').focus(), 100);
+    }
+
+    function editJournalEntry(id) { showAddJournalModal(id); }
+
+    function selectMood(mood) {
+        selectedMood = mood;
+        document.querySelectorAll('.mood-btn').forEach(b => b.classList.remove('selected'));
+        document.querySelector(`.mood-btn[data-mood="${mood}"]`).classList.add('selected');
+    }
+
+    function saveJournalEntry() {
+        const date = document.getElementById('journalDate').value;
+        const text = document.getElementById('journalText').value.trim();
+        if (!date || !text) return;
+        if (editingJournalId) {
+            const entry = state.journal.find(e => e.id === editingJournalId);
+            entry.date = date; entry.text = text; entry.mood = selectedMood;
+            logActivity('Journal entry updated');
+        } else {
+            const id = 'j' + Date.now();
+            state.journal.push({ id, date, text, mood: selectedMood, author: state.currentUser });
+            logActivity('New journal entry added');
+        }
+        saveState();
+        closeModal('addJournalModal');
+        renderJournal();
+    }
+
+    function deleteJournalEntry(id) {
+        if (!confirm('Delete this journal entry?')) return;
+        state.journal = state.journal.filter(e => e.id !== id);
+        saveState();
+        logActivity('Journal entry deleted');
+        renderJournal();
+    }
+
+    // =====================================================================
+    // IDEAS BOARD (ADMIN)
+    // =====================================================================
+    function renderKanban() {
+        const board = document.getElementById('kanbanBoard');
+        const columns = [
+            { key: 'ideas', label: '💡 Ideas', color: '#9b59b6' },
+            { key: 'exploring', label: '🔍 Exploring', color: '#3498db' },
+            { key: 'doing', label: '🚀 Doing', color: '#27ae60' }
+        ];
+        board.innerHTML = columns.map(col => {
+            const cards = (state.ideas[col.key] || []);
+            return `
+                <div class="kanban-column">
+                    <div class="kanban-column-title" style="border-bottom-color:${col.color};">
+                        <span>${col.label} <span style="color:var(--text-muted);font-weight:400;font-size:0.85em;">${cards.length}</span></span>
+                    </div>
+                    <div id="kanban-${col.key}">
+                        ${cards.length === 0 ? '<div style="color:var(--text-muted);font-size:0.85em;padding:10px 0;">No ideas here yet.</div>' : ''}
+                        ${cards.map(card => `
+                            <div class="kanban-card" style="border-left-color:${col.color};" onclick="showEditIdeaModal('${card.id}')">
+                                <div class="kanban-card-title">${escHtml(card.title)}</div>
+                                ${card.desc ? `<div class="kanban-card-desc">${escHtml(card.desc)}</div>` : ''}
+                                <div class="kanban-card-actions">
+                                    ${col.key !== 'exploring' ? `<button class="action-btn" onclick="event.stopPropagation();moveIdea('${card.id}', '${col.key}', '${col.key === 'ideas' ? 'exploring' : 'doing'}')" title="Move →">→</button>` : ''}
+                                    ${col.key === 'exploring' ? `<button class="action-btn" onclick="event.stopPropagation();moveIdea('${card.id}', 'exploring', 'ideas')" title="← Back">←</button><button class="action-btn" onclick="event.stopPropagation();moveIdea('${card.id}', 'exploring', 'doing')" title="Move →">→</button>` : ''}
+                                    ${col.key === 'doing' ? `<button class="action-btn" onclick="event.stopPropagation();moveIdea('${card.id}', 'doing', 'exploring')" title="← Back">←</button>` : ''}
+                                </div>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <button class="kanban-add-btn" onclick="showAddIdeaModal('${col.key}')">+ Add idea</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function showAddIdeaModal(column) {
+        document.getElementById('newIdeaTitle').value = '';
+        document.getElementById('newIdeaDesc').value = '';
+        document.getElementById('newIdeaColumn').value = column;
+        document.getElementById('addIdeaModal').classList.add('active');
+        setTimeout(() => document.getElementById('newIdeaTitle').focus(), 100);
+    }
+
+    function saveIdea() {
+        const title = document.getElementById('newIdeaTitle').value.trim();
+        const desc = document.getElementById('newIdeaDesc').value.trim();
+        const col = document.getElementById('newIdeaColumn').value;
+        if (!title) return;
+        if (!state.ideas[col]) state.ideas[col] = [];
+        state.ideas[col].push({ id: 'i' + Date.now(), title, desc });
+        saveState();
+        logActivity(`Idea added: "${title}"`);
+        closeModal('addIdeaModal');
+        renderKanban();
+    }
+
+    function showEditIdeaModal(id) {
+        let found, col;
+        for (const c of ['ideas','exploring','doing']) {
+            const item = (state.ideas[c] || []).find(i => i.id === id);
+            if (item) { found = item; col = c; break; }
+        }
+        if (!found) return;
+        document.getElementById('editIdeaTitle').value = found.title;
+        document.getElementById('editIdeaDesc').value = found.desc || '';
+        document.getElementById('editIdeaColumn').value = col;
+        document.getElementById('editIdeaId').value = id;
+        document.getElementById('editIdeaModal').classList.add('active');
+    }
+
+    function updateIdea() {
+        const id = document.getElementById('editIdeaId').value;
+        const title = document.getElementById('editIdeaTitle').value.trim();
+        const desc = document.getElementById('editIdeaDesc').value.trim();
+        const newCol = document.getElementById('editIdeaColumn').value;
+        if (!title) return;
+        // Remove from current column
+        for (const c of ['ideas','exploring','doing']) {
+            const idx = (state.ideas[c] || []).findIndex(i => i.id === id);
+            if (idx > -1) { state.ideas[c].splice(idx, 1); break; }
+        }
+        // Add to new column
+        if (!state.ideas[newCol]) state.ideas[newCol] = [];
+        state.ideas[newCol].push({ id, title, desc });
+        saveState();
+        closeModal('editIdeaModal');
+        renderKanban();
+    }
+
+    function deleteIdea() {
+        const id = document.getElementById('editIdeaId').value;
+        for (const c of ['ideas','exploring','doing']) {
+            const idx = (state.ideas[c] || []).findIndex(i => i.id === id);
+            if (idx > -1) { state.ideas[c].splice(idx, 1); break; }
+        }
+        saveState();
+        logActivity('Idea deleted');
+        closeModal('editIdeaModal');
+        renderKanban();
+    }
+
+    function moveIdea(id, fromCol, toCol) {
+        const idx = (state.ideas[fromCol] || []).findIndex(i => i.id === id);
+        if (idx === -1) return;
+        const item = state.ideas[fromCol].splice(idx, 1)[0];
+        if (!state.ideas[toCol]) state.ideas[toCol] = [];
+        state.ideas[toCol].push(item);
+        saveState();
+        renderKanban();
+    }
+
+    // =====================================================================
+    // GOALS TRACKER (ADMIN)
+    // =====================================================================
+    function renderGoals() {
+        const grid = document.getElementById('goalsGrid');
+        if (state.goals.length === 0) {
+            grid.innerHTML = '<div class="empty-state" style="grid-column:1/-1;"><div class="empty-icon">🎯</div><div>No goals yet. Add your first goal!</div></div>';
+            return;
+        }
+        grid.innerHTML = state.goals.map(g => {
+            const total = g.milestones.length;
+            const done = g.milestones.filter(m => m.done).length;
+            const pct = total > 0 ? Math.round((done / total) * 100) : 0;
+            return `
+                <div class="goal-card">
+                    <div class="goal-header">
+                        <div class="goal-title">${escHtml(g.title)}</div>
+                        ${g.category ? `<div class="goal-category">${escHtml(g.category)}</div>` : ''}
+                    </div>
+                    <div style="font-size:0.85em;color:var(--text-muted);">${done}/${total} milestones · ${pct}% complete</div>
+                    <div class="goal-progress-bar"><div class="goal-progress-fill" style="width:${pct}%"></div></div>
+                    <div class="goal-milestones">
+                        ${g.milestones.map(m => `
+                            <div class="goal-milestone ${m.done ? 'done' : ''}">
+                                <input type="checkbox" ${m.done ? 'checked' : ''} onchange="toggleMilestone('${g.id}', '${m.id}')">                                <span>${escHtml(m.text)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                    <div class="goal-actions">
+                        <button class="btn btn-sm btn-cancel" onclick="editGoal('${g.id}')">✎ Edit</button>
+                        <button class="btn btn-sm btn-delete" onclick="deleteGoal('${g.id}')">🗑️ Delete</button>
+                    </div>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function showAddGoalModal() {
+        document.getElementById('goalModalTitle').textContent = 'New Goal';
+        document.getElementById('goalTitle').value = '';
+        document.getElementById('goalCategory').value = '';
+        document.getElementById('goalMilestones').value = '';
+        document.getElementById('goalEditId').value = '';
+        document.getElementById('addGoalModal').classList.add('active');
+        setTimeout(() => document.getElementById('goalTitle').focus(), 100);
+    }
+
+    function editGoal(id) {
+        const g = state.goals.find(g => g.id === id);
+        if (!g) return;
+        document.getElementById('goalModalTitle').textContent = 'Edit Goal';
+        document.getElementById('goalTitle').value = g.title;
+        document.getElementById('goalCategory').value = g.category || '';
+        document.getElementById('goalMilestones').value = g.milestones.map(m => m.text).join('\n');
+        document.getElementById('goalEditId').value = id;
+        document.getElementById('addGoalModal').classList.add('active');
+    }
+
+    function saveGoal() {
+        const title = document.getElementById('goalTitle').value.trim();
+        const category = document.getElementById('goalCategory').value.trim();
+        const milestonesRaw = document.getElementById('goalMilestones').value;
+        const editId = document.getElementById('goalEditId').value;
+        if (!title) return;
+        const milestones = milestonesRaw.split('\n')
+            .map(s => s.trim()).filter(Boolean)
+            .map(text => ({ id: 'm' + Date.now() + Math.random(), text, done: false }));
+
+        if (editId) {
+            const g = state.goals.find(g => g.id === editId);
+            // Preserve done status for matching milestones
+            const oldMap = {};
+            g.milestones.forEach(m => oldMap[m.text] = m.done);
+            g.title = title;
+            g.category = category;
+            g.milestones = milestones.map(m => ({ ...m, done: oldMap[m.text] || false }));
+            logActivity(`Goal updated: "${title}"`);
+        } else {
+            state.goals.push({ id: 'g' + Date.now(), title, category, milestones });
+            logActivity(`Goal added: "${title}"`);
+        }
+        saveState();
+        closeModal('addGoalModal');
+        renderGoals();
+    }
+
+    function deleteGoal(id) {
+        if (!confirm('Delete this goal?')) return;
+        state.goals = state.goals.filter(g => g.id !== id);
+        saveState();
+        logActivity('Goal deleted');
+        renderGoals();
+    }
+
+    function toggleMilestone(goalId, milestoneId) {
+        const g = state.goals.find(g => g.id === goalId);
+        if (!g) return;
+        const m = g.milestones.find(m => m.id === milestoneId);
+        if (!m) return;
+        m.done = !m.done;
+        if (m.done) logActivity(`Milestone done: "${m.text}"`);
+        saveState();
+        renderGoals();
+    }
+
+    // =====================================================================
+    // GIFT IDEAS (ADMIN, on family pages)
+    // =====================================================================
+    function showAddGiftModal(memberId) {
+        document.getElementById('giftMemberId').value = memberId;
+        document.getElementById('newGiftText').value = '';
+        document.getElementById('newGiftPriority').value = 'medium';
+        document.getElementById('addGiftModal').classList.add('active');
+        setTimeout(() => document.getElementById('newGiftText').focus(), 100);
+    }
+
+    function saveGiftIdea() {
+        const memberId = parseInt(document.getElementById('giftMemberId').value);
+        const text = document.getElementById('newGiftText').value.trim();
+        const priority = document.getElementById('newGiftPriority').value;
+        if (!text) return;
+        if (!state.giftIdeas[memberId]) state.giftIdeas[memberId] = [];
+        state.giftIdeas[memberId].push({ id: 'gift' + Date.now(), text, priority });
+        saveState();
+        logActivity(`Gift idea added for member ${memberId}`);
+        closeModal('addGiftModal');
+        showFamilyMember(memberId);
+    }
+
+    function removeGiftIdea(memberId, giftId) {
+        if (!state.giftIdeas[memberId]) return;
+        state.giftIdeas[memberId] = state.giftIdeas[memberId].filter(g => g.id !== giftId);
+        saveState();
+        showFamilyMember(memberId);
+    }
+
+    // =====================================================================
+    // ACTION ITEMS (ADMIN, on family pages)
+    // =====================================================================
+    function showAddActionModal(memberId) {
+        document.getElementById('actionMemberId').value = memberId;
+        document.getElementById('newActionText').value = '';
+        document.getElementById('addActionModal').classList.add('active');
+        setTimeout(() => document.getElementById('newActionText').focus(), 100);
+    }
+
+    function saveActionItem() {
+        const memberId = parseInt(document.getElementById('actionMemberId').value);
+        const text = document.getElementById('newActionText').value.trim();
+        if (!text) return;
+        if (!state.actionItems[memberId]) state.actionItems[memberId] = [];
+        state.actionItems[memberId].push({ id: 'act' + Date.now(), text, done: false });
+        saveState();
+        logActivity(`Action item added for member ${memberId}`);
+        closeModal('addActionModal');
+        showFamilyMember(memberId);
+    }
+
+    function toggleActionItem(memberId, actionId) {
+        const actions = state.actionItems[memberId] || [];
+        const a = actions.find(a => a.id === actionId);
+        if (!a) return;
+        a.done = !a.done;
+        saveState();
+        showFamilyMember(memberId);
+    }
+
+    function removeActionItem(memberId, actionId) {
+        if (!state.actionItems[memberId]) return;
+        state.actionItems[memberId] = state.actionItems[memberId].filter(a => a.id !== actionId);
+        saveState();
+        showFamilyMember(memberId);
+    }
+
+    // =====================================================================
+    // ADMIN DASHBOARD
+    // =====================================================================
+    function renderAdminDash() {
+        renderSectionLocks();
+        renderActivityLog();
+    }
+
+    function renderSectionLocks() {
+        const panel = document.getElementById('sectionLocksPanel');
+        const sections = [
+            { key: 'food', label: '🍽️ Food' },
+            { key: 'projects', label: '🔨 Projects' },
+            { key: 'todos', label: '✅ To-Do\'s' },
+            { key: 'calendar', label: '📅 Calendar' },
+            { key: 'family', label: '👨‍👩‍👧‍👦 Family' }
+        ];
+        panel.innerHTML = sections.map(s => {
+            const isLocked = state.sectionLocks[s.key];
+            return `
+                <div class="lock-row">
+                    <div>
+                        <div class="lock-row-label">${s.label}</div>
+                        <div class="lock-hint">${isLocked ? '🔒 Locked for non-admins' : '🔓 Visible to everyone'}</div>
+                    </div>
+                    <label class="toggle-switch">
+                        <input type="checkbox" ${isLocked ? 'checked' : ''} onchange="toggleSectionLock('${s.key}', this.checked)">
+                        <span class="toggle-slider"></span>
+                    </label>
+                </div>
+            `;
+        }).join('');
+    }
+
+    function toggleSectionLock(section, locked) {
+        state.sectionLocks[section] = locked;
+        saveState();
+        logActivity(`Section "${section}" ${locked ? 'locked' : 'unlocked'}`);
+        renderSectionLocks();
+    }
+
+    function renderActivityLog() {
+        const panel = document.getElementById('activityLogPanel');
+        if (state.activityLog.length === 0) {
+            panel.innerHTML = '<div style="color:var(--text-muted);padding:10px;font-size:0.9em;">No activity recorded yet.</div>';
+            return;
+        }
+        panel.innerHTML = state.activityLog.map(entry => `
+            <div class="activity-entry">
+                <div class="activity-time">${entry.time}</div>
+                <div>${capitalise(entry.user || '')} — ${escHtml(entry.msg)}</div>
+            </div>
+        `).join('');
+    }
+
+    function clearActivityLog() {
+        if (!confirm('Clear all activity log entries?')) return;
+        state.activityLog = [];
+        saveState();
+        renderActivityLog();
+    }
+
+    // =====================================================================
+    // UTILS
+    // =====================================================================
+    function toggleSection(header) {
+        const toggle = header.querySelector('.section-toggle');
+        const content = header.nextElementSibling;
+        toggle.classList.toggle('open');
+        content.classList.toggle('open');
+    }
+
+    function closeModal(id) {
+        document.getElementById(id).classList.remove('active');
+    }
+
+    // Close modals on backdrop click
+    document.querySelectorAll('.modal').forEach(modal => {
+        modal.addEventListener('click', function(e) {
+            if (e.target === modal) modal.classList.remove('active');
+        });
+    });
+
+    function escHtml(s) {
+        if (!s) return '';
+        return String(s)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;');
+    }
+
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr + 'T12:00:00');
+            return d.toLocaleDateString('en-CA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+        } catch(e) { return dateStr; }
+    }
+
+    </script>
+</body>
+</html>

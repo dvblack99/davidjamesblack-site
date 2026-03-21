@@ -1,0 +1,24 @@
+{
+  "currentUser": null,
+  "isAdmin": false,
+  "darkMode": false,
+  "journal": [],
+  "ideas": {
+    "ideas": [],
+    "exploring": [],
+    "doing": []
+  },
+  "goals": [],
+  "giftIdeas": {},
+  "actionItems": {},
+  "sectionLocks": {
+    "food": false,
+    "projects": false,
+    "todos": false,
+    "calendar": false,
+    "family": false
+  },
+  "activityLog": [],
+  "lastSync": "2026-03-21T16:18:00Z",
+  "version": "1.0"
+}
