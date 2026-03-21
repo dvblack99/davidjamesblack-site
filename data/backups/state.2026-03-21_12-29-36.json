@@ -1,0 +1,31 @@
+{
+  "currentUser": null,
+  "isAdmin": false,
+  "darkMode": false,
+  "journal": [],
+  "ideas": {
+    "ideas": [],
+    "exploring": [],
+    "doing": []
+  },
+  "goals": [],
+  "giftIdeas": {},
+  "actionItems": {},
+  "sectionLocks": {
+    "food": false,
+    "projects": false,
+    "todos": false,
+    "calendar": false,
+    "family": false
+  },
+  "activityLog": [
+    {
+      "timestamp": "2026-03-21T16:29:00Z",
+      "user": "David",
+      "action": "Added cornstarch to grocery list",
+      "section": "Food"
+    }
+  ],
+  "lastSync": "2026-03-21T16:29:00Z",
+  "version": "1.0"
+}
