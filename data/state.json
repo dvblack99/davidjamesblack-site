@@ -20,12 +20,18 @@
   },
   "activityLog": [
     {
+      "timestamp": "2026-03-21T16:31:00Z",
+      "user": "David",
+      "action": "Added to-do: Buy new iPad cover - contact Reiko",
+      "section": "To-Do's"
+    },
+    {
       "timestamp": "2026-03-21T16:29:00Z",
       "user": "David",
       "action": "Added cornstarch to grocery list",
       "section": "Food"
     }
   ],
-  "lastSync": "2026-03-21T16:29:00Z",
+  "lastSync": "2026-03-21T16:31:00Z",
   "version": "1.0"
 }
