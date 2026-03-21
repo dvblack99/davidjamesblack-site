@@ -1157,54 +1157,22 @@
 
     const data = {
         groceries: [
-            { category: 'Produce 🥬🍅🍌🍎', items: ['Broccoli', 'Scallions', 'Iceberg lettuce', 'Tomatoes', 'Limes', 'Cilantro', 'Apples', 'Bananas', 'Cauliflower', 'Peppers', 'Carrots', 'Red onion'] },
-            { category: 'Meat / Deli 🍗🥩', items: ['Sandwich meat for Sean', 'Sandwich meat for Flora', 'Pepperoni sticks'] },
-            { category: 'Dairy / Refrigerated 🥛🧀', items: ['Milk', 'Eggs', 'Cheddar cheese', 'Mozzarella cheese', 'Butter', 'Yogurts', 'Soy milk', 'Cheese sticks', 'Skyr', 'Provolone cheese'] },
-            { category: 'Bakery 🍞', items: ['Tortillas', 'Bread', 'Naan', 'Hamburger buns'] },
-            { category: 'Frozen ❄️', items: ['Frozen French fries', 'Frozen pizzas', 'Frozen cannelloni', 'Frozen garlic bread'] },
-            { category: 'Pantry 🥫', items: ['Worcestershire sauce', 'Crushed tomatoes', 'Tomato sauce', 'Steel cut oats', 'Garlic powder', 'Rice', 'Tomato paste', 'Black beans', 'Raisins', 'Chicken stock', 'Panko bread crumbs', 'Cornstarch'] },
-            { category: 'Drinks 🧃', items: ['Juice boxes', 'Pink lemonade'] },
-            { category: 'Beverages ☕', items: ['Whole bean coffee'] },
-            { category: 'Household 🧼', items: ['Dish detergent', 'J Cloths'] }
+            { category: 'Pantry 🥫', items: ['Cornstarch'] },
+            { category: 'Household 🧼', items: ['J Cloths'] }
         ],
-        inventory: ['Pasta','Rice','Flour','Sugar','Eggs','Milk','Butter','Olive Oil','Garlic powder','Onions','Salt & Pepper','Cheddar Cheese','Mozzarella Cheese','Provolone Cheese','Bread','Tortillas','Hamburger buns','Naan','Broccoli','Scallions','Lettuce','Tomatoes','Limes','Cilantro','Apples','Bananas','Cauliflower','Bell Peppers','Carrots','Red Onion','Yogurts','Soy milk','Cheese sticks','Skyr','Frozen French fries','Frozen pizzas','Frozen cannelloni','Frozen garlic bread','Worcestershire sauce','Crushed tomatoes','Steel cut oats','Tomato paste','Black beans','Raisins','Chicken stock','Panko bread crumbs','Cornstarch','Juice boxes','Pink lemonade','Coffee beans','Dish detergent','J Cloths'],
-        recipes: [
-            { id: 1, name: 'Tacos', servings: '6 tacos', time: '20 minutes', difficulty: 'Easy', ingredients: ['1 lb Ground Beef or Turkey','1 packet Taco Seasoning','6 Tortillas','Shredded Cheese','Lettuce','Tomatoes','Sour Cream','Cilantro'], steps: [{num:1,text:'Heat oil in a large skillet over medium-high heat.'},{num:2,text:'Add ground meat and cook until browned, breaking it up as it cooks (about 5-7 minutes). Drain excess fat.'},{num:3,text:'Add taco seasoning and water according to packet instructions. Simmer for 2 minutes.'},{num:4,text:'Warm tortillas in a separate skillet or over flame.'},{num:5,text:'Assemble tacos with meat and desired toppings.'},{num:6,text:'Serve immediately with cilantro, lime, and sour cream.'}] },
-            { id: 2, name: 'Spaghetti Pasta', servings: '4-6 servings', time: '30 minutes', difficulty: 'Easy', ingredients: ['1 lb Penne Pasta','24 oz Tomato Sauce','3 cloves Garlic (minced)','2 tbsp Olive Oil','Salt & Pepper','Fresh Basil (optional)','Parmesan Cheese'], steps: [{num:1,text:'Bring a large pot of salted water to a boil.'},{num:2,text:'Add pasta and cook according to package directions. Drain and set aside.'},{num:3,text:'Heat olive oil in another pot. Add minced garlic and sauté for 1 minute until fragrant.'},{num:4,text:'Pour in tomato sauce and stir well. Simmer for 10-15 minutes.'},{num:5,text:'Season with salt and pepper to taste.'},{num:6,text:'Combine pasta and sauce, garnish with fresh basil and parmesan cheese.'}] },
-            { id: 3, name: 'Roast Chicken with Vegetables', servings: '4-6 servings', time: '90 minutes', difficulty: 'Medium', ingredients: ['1 whole Chicken (4-5 lbs)','Carrots','Bell Peppers','Onions','Olive Oil','Salt, Pepper, Garlic Powder','Fresh Herbs (rosemary, thyme)'], steps: [{num:1,text:'Preheat oven to 425°F (220°C).'},{num:2,text:'Pat chicken dry and place in a roasting pan. Chop vegetables into large pieces.'},{num:3,text:'Arrange vegetables around the chicken. Drizzle everything with olive oil.'},{num:4,text:'Season chicken and vegetables with salt, pepper, garlic powder, and fresh herbs.'},{num:5,text:'Roast for 60-75 minutes until chicken is golden and internal temp reaches 165°F.'},{num:6,text:'Rest for 10 minutes before carving and serving.'}] },
-            { id: 4, name: 'Hamburgers', servings: '4 burgers', time: '15 minutes', difficulty: 'Easy', ingredients: ['1 lb Ground Beef','Hamburger Buns','Cheese (optional)','Lettuce','Tomatoes','Onion','Condiments'], steps: [{num:1,text:'Divide ground beef into 4 equal portions. Form into patties with a thumbprint in the center.'},{num:2,text:'Heat a skillet or grill to medium-high heat. Cook patties for 3-4 minutes per side.'},{num:3,text:'Add cheese (if desired) in the last minute of cooking and cover to melt.'},{num:4,text:'Toast buns if desired.'},{num:5,text:'Assemble burgers with patty, toppings, and condiments.'},{num:6,text:'Serve immediately with fries or salad.'}] }
-        ],
+        inventory: [],
+        recipes: [],
         projects: [
-            { id:1, title:'Roof Inspection & Potential Replacement', status:'Pending', dueDate:'May 2026', budget:'$12,000-$15,000', spent:'$0', description:'House built in 1974 - roof may be nearing end of life. Professional inspection required.', details:'Original roof likely 25-30+ years old. Need inspection to determine if repair or full replacement needed.' },
-            { id:2, title:'Deck Staining & Sealing', status:'Scheduled', dueDate:'May 1, 2026', budget:'$1,200', spent:'$0', description:'Pressure wash and restain the back deck.', details:'Deck showing weather wear. Schedule professional staining service.' },
-            { id:3, title:'Garage Door Opener Repair', status:'Completed', dueDate:'March 10, 2026', budget:'$500', spent:'$475', description:'Repair garage door opener and springs.', details:'Door opener replaced, springs lubricated and tested.' },
-            { id:4, title:'Vinyl Siding Repair & Caulking', status:'In Progress', dueDate:'April 30, 2026', budget:'$2,500', spent:'$800', description:'Inspect and repair deteriorating vinyl siding.', details:'Some cracked and loose panels on north side.' },
-            { id:5, title:'Foundation Sealing & Waterproofing', status:'Research', dueDate:'June 2026', budget:'$3,000-$5,000', spent:'$0', description:'Inspect basement for cracks and water intrusion.', details:'Older homes in Lynn Valley can have moisture issues.' },
-            { id:6, title:'Gutter Cleaning & Inspection', status:'Scheduled', dueDate:'April 2026', budget:'$400', spent:'$0', description:'Clean gutters and downspouts.', details:'Twice yearly cleaning recommended.' },
-            { id:7, title:'HVAC System Service & Maintenance', status:'Pending', dueDate:'May 2026', budget:'$800-$1,200', spent:'$0', description:'Professional HVAC inspection, filter replacement.', details:'Furnace and AC system need annual maintenance.' },
-            { id:8, title:'Water Heater Inspection', status:'Research', dueDate:'July 2026', budget:'$1,500-$2,500', spent:'$0', description:'Inspect water heater for age and condition.', details:'Typical lifespan is 10-15 years.' },
-            { id:9, title:'Window Caulking & Weatherstripping', status:'Scheduled', dueDate:'April 2026', budget:'$600', spent:'$0', description:'Re-caulk windows and replace weatherstripping.', details:'Older homes lose heat through windows.' },
-            { id:10, title:'Chimney Inspection & Sweep', status:'Pending', dueDate:'September 2026', budget:'$400-$600', spent:'$0', description:'Professional chimney inspection and cleaning.', details:'If fireplace is used, professional sweep required annually.' },
-            { id:11, title:'Exterior Paint & Caulk Refresh', status:'Planning', dueDate:'Summer 2026', budget:'$4,000-$6,000', spent:'$0', description:'Repaint exterior trim, fascia, and soffits.', details:'50-year-old house needs regular paint maintenance.' },
-            { id:12, title:'Landscaping & Yard Work', status:'Ongoing', dueDate:'Spring/Summer 2026', budget:'$1,500-$2,000', spent:'$0', description:'Trim trees, remove dead branches, mulch beds.', details:'Regular maintenance prevents damage to roof and gutters.' },
-            { id:13, title:'Basement Insulation & Vapor Barrier', status:'Research', dueDate:'Fall 2026', budget:'$2,000-$3,500', spent:'$0', description:'Add/upgrade insulation in basement walls.', details:'Older homes often under-insulated.' },
-            { id:14, title:'Electrical Panel Inspection', status:'Pending', dueDate:'May 2026', budget:'$500', spent:'$0', description:'Licensed electrician inspection of electrical panel.', details:'Older homes may have outdated panels or aluminum wiring.' },
-            { id:15, title:'Build Sean Bocce Ball Ramp', status:'In Progress', dueDate:'March 21, 2026 (this weekend)', budget:'$50-$150', spent:'$0', description:'Build a bocce ball ramp for Sean.', details:'Fun backyard project for Sean. Needs lumber, leveling, finishing.' }
+            { id:1, title:'Build Sean Bocce Ball Ramp', status:'In Progress', dueDate:'March 21, 2026 (this weekend)', budget:'$50-$150', spent:'$0', description:'Build a bocce ball ramp for Sean.', details:'Fun backyard project for Sean. Needs lumber, leveling, finishing.' }
         ],
         todos: [
-            { id:1, text:'Organize kitchen pantry', category:'Cleaning', priority:'High', status:'pending' },
-            { id:2, text:'Laundry - sheets and towels', category:'Laundry', priority:'Medium', status:'pending' },
-            { id:3, text:'Yard work - mow lawn', category:'Yard', priority:'High', status:'pending' },
-            { id:4, text:'Clean out refrigerator', category:'Cleaning', priority:'Medium', status:'pending' },
-            { id:5, text:'Vacuum living room carpet', category:'Cleaning', priority:'Low', status:'pending' },
-            { id:6, text:'Water plants', category:'Yard', priority:'Low', status:'pending' },
-            { id:7, text:'Buy new iPad cover - contact Reiko', category:'Shopping', priority:'Medium', status:'pending' },
-            { id:8, text:'Order Sean shoes', category:'Shopping', priority:'Medium', status:'pending' },
-            { id:9, text:'Get Sean a haircut', category:'Personal', priority:'Medium', status:'pending' },
-            { id:10, text:'Josiane practice bus for volleyball camp', category:'Sports', priority:'High', status:'pending' },
-            { id:11, text:"Do Marilyn's taxes this year for her", category:'Financial', priority:'Medium', status:'pending' },
-            { id:12, text:'Lindsey talk to Josiane about sailing camp sign-up (April 1)', category:'Family', priority:'High', status:'pending' },
-            { id:13, text:'Get Sean a new phone', category:'Shopping', priority:'Medium', status:'pending' }
+            { id:1, text:'Order Sean shoes', category:'Shopping', priority:'Medium', status:'pending' },
+            { id:2, text:'Get Sean a haircut', category:'Personal', priority:'Medium', status:'pending' },
+            { id:3, text:'Josiane practice bus for volleyball camp', category:'Sports', priority:'High', status:'pending' },
+            { id:4, text:'Buy new iPad cover - contact Reiko', category:'Shopping', priority:'Medium', status:'pending' },
+            { id:5, text:"Do Marilyn's taxes this year for her", category:'Financial', priority:'Medium', status:'pending' },
+            { id:6, text:'Lindsey talk to Josiane about sailing camp sign-up (April 1)', category:'Family', priority:'High', status:'pending' },
+            { id:7, text:'Get Sean a new phone', category:'Shopping', priority:'Medium', status:'pending' }
         ],
         familyMembers: [
             { id:1, name:'David', role:'Father', emoji:'👨', bio:'Marine engineer. Speaks French, enjoys music and outdoor activities.', details:{ age:'~45', occupation:'Marine Engineer', languages:'English, French', hobbies:'Cycling, hiking, jogging, swimming', music:'Sings in choir' } },
@@ -1216,37 +1184,18 @@
             { id:7, name:'Lisa', role:'Exchange Student', emoji:'🌍', bio:'Exchange student from Italy, age 18.', details:{} }
         ],
         calendar: {
-            monday: [
-                { name:'Josiane Piano Lesson', time:'4:00 PM', description:'Weekly piano lesson for Josiane with her instructor' },
-                { name:'Dinner: Pasta', time:'6:00 PM', description:'Penne pasta with tomato sauce and fresh basil' }
-            ],
+            monday: [],
             tuesday: [
-                { name:'Sailing Camp Sign-Up Day (April 1)', time:'All Day', description:'April 1: Deadline to sign up for sailing camp - Josiane and Lindsey discuss' },
-                { name:'Dentist Appointment', time:'2:00 PM', description:'Regular dental checkup for family member' },
-                { name:'Dinner: Tacos', time:'6:00 PM', description:'Ground beef or turkey tacos with all the toppings' }
+                { name:'Sailing Camp Sign-Up Day (April 1)', time:'All Day', description:'April 1: Deadline to sign up for sailing camp - Josiane and Lindsey discuss' }
             ],
-            wednesday: [
-                { name:'Library', time:'3:30 PM', description:'Visit to the local library - book pickup and browsing' },
-                { name:'Dinner: Soup', time:'6:00 PM', description:'Homemade soup - recipe and ingredients vary' }
-            ],
-            thursday: [
-                { name:'Team Meeting', time:'7:00 PM', description:'Work meeting (Mr. Black)' },
-                { name:'Dinner: Chicken & Vegetables', time:'6:00 PM', description:'Roasted chicken with seasonal vegetables' }
-            ],
-            friday: [
-                { name:'Grocery Shopping', time:'9:00 AM', description:'Weekly grocery shopping at Superstore - main shopping day for the week' },
-                { name:'Dinner: Hamburgers', time:'6:00 PM', description:'Fresh hamburgers with cheese, lettuce, tomato and condiments' }
-            ],
+            wednesday: [],
+            thursday: [],
+            friday: [],
             saturday: [
-                { name:'Cookie Pickup - Girl Guides', time:'10:30 AM', description:'Girl Guides cookie pickup' },
-                { name:"Sean's Soccer Game", time:'10:00 AM', description:"Sean's youth soccer game - family attends to support" },
-                { name:'Dinner: Leftovers', time:'6:00 PM', description:'Leftovers from previous meals or student cooking experiment' }
+                { name:'Cookie Pickup - Girl Guides', time:'10:30 AM', description:'Girl Guides cookie pickup' }
             ],
             sunday: [
-                { name:'Josiane Volleyball Camp Starts', time:'All Day', description:'Josiane volleyball camp March 23-27 at Lionsgate Christian Academy' },
-                { name:'Aquarium with Sean', time:'2:00 PM', description:'Visit to aquarium with Sean, meeting choir friends Bernard, Joannah & Everett' },
-                { name:'Family Dinner', time:'6:00 PM', description:'Family dinner time together' },
-                { name:'Dinner: Roast', time:'6:00 PM', description:'Sunday roast with vegetables - traditional family meal' }
+                { name:'Josiane Volleyball Camp Starts', time:'All Day', description:'Josiane volleyball camp March 23-27 at Lionsgate Christian Academy' }
             ]
         }
     };
