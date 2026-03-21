@@ -18,7 +18,14 @@
     "calendar": false,
     "family": false
   },
-  "activityLog": [],
-  "lastSync": "2026-03-21T16:18:00Z",
+  "activityLog": [
+    {
+      "timestamp": "2026-03-21T16:29:00Z",
+      "user": "David",
+      "action": "Added cornstarch to grocery list",
+      "section": "Food"
+    }
+  ],
+  "lastSync": "2026-03-21T16:29:00Z",
   "version": "1.0"
 }
