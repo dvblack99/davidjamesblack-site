@@ -25,7 +25,7 @@
     body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
 
 ```
-.header { position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:var(--shadow-sm); }
+.header { position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:var(--shadow-sm);flex-wrap:nowrap; }
 .header-left { display:flex;align-items:center;gap:12px; }
 .header-brand { display:flex;align-items:center;gap:12px;font-family:'EB Garamond',Georgia,serif;font-size:1.5rem;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer; }
 .header-brand i { color:var(--accent);font-size:1.3rem; }
@@ -409,9 +409,22 @@
 
     /* ── STORIES ── */
     async function loadStories() {
-      const expectedFiles = ['poured-in-place.json', 'signal-hill.json'];
       stories = [];
-      for (const f of expectedFiles) {
+      // Try manifest first, then fall back to known files
+      try {
+        const manifest = await fetch('stories/index.json');
+        if (manifest.ok) {
+          const files = await manifest.json();
+          for (const f of files) {
+            try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
+          }
+          renderProjectList();
+          return;
+        }
+      } catch(e) {}
+      // Fallback: try known files
+      const knownFiles = ['poured-in-place.json', 'signal-hill.json'];
+      for (const f of knownFiles) {
         try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
       }
       renderProjectList();
