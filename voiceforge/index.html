@@ -218,7 +218,7 @@
       <a class="header-brand" onclick="goHome()"><i class="fa-solid fa-book-open"></i> VoiceForge</a>
     </div>
     <div class="header-right">
-      <button id="main-menu-btn" onclick="goHome()" class="btn btn-outline"><i class="fa-solid fa-house"></i><span class="hide-mobile"> Home</span></button>
+      <button id="main-menu-btn" onclick="goHome()" class="btn-icon" title="Home"><i class="fa-solid fa-house"></i></button>
     </div>
   </header>
 
@@ -412,7 +412,7 @@
       stories = [];
       // Try manifest first, then fall back to known files
       try {
-        const manifest = await fetch('stories/index.json');
+        const manifest = await fetch('stories/stories-index.json');
         if (manifest.ok) {
           const files = await manifest.json();
           for (const f of files) {
