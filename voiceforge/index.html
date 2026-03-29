@@ -22,10 +22,10 @@
       --shadow-lg: 0 8px 32px rgba(44,33,24,0.12);
       --radius: 16px; --radius-sm: 10px; --header-h: 64px;
     }
-    body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; }
+    body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; padding-top:var(--header-h); }
 
 ```
-.header { position:sticky;top:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:var(--header-h);display:flex;align-items:center;justify-content:space-between;padding:0 24px;box-shadow:var(--shadow-sm);flex-wrap:nowrap; }
+.header { position:fixed;top:0;left:0;right:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:var(--header-h);display:flex;align-items:center;gap:12px;padding:0 24px;box-shadow:var(--shadow-sm); }
 .header-left { display:flex;align-items:center;gap:12px; }
 .header-brand { display:flex;align-items:center;gap:12px;font-family:'EB Garamond',Georgia,serif;font-size:1.5rem;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer; }
 .header-brand i { color:var(--accent);font-size:1.3rem; }
@@ -213,13 +213,9 @@
 </head>
 <body>
   <header class="header">
-    <div class="header-left">
-      <button class="btn-icon menu-toggle" onclick="toggleDrawer()" aria-label="Characters" style="display:none;"><i class="fa-solid fa-users"></i></button>
-      <a class="header-brand" onclick="goHome()"><i class="fa-solid fa-book-open"></i> VoiceForge</a>
-    </div>
-    <div class="header-right">
-      <button id="main-menu-btn" onclick="goHome()" class="btn-icon" title="Home"><i class="fa-solid fa-house"></i></button>
-    </div>
+    <button class="btn-icon menu-toggle" onclick="toggleDrawer()" aria-label="Characters" style="display:none;"><i class="fa-solid fa-users"></i></button>
+    <a class="header-brand" onclick="goHome()"><i class="fa-solid fa-book-open"></i> VoiceForge</a>
+    <button id="main-menu-btn" onclick="goHome()" class="btn-icon" title="Home" style="margin-left:auto;"><i class="fa-solid fa-house"></i></button>
   </header>
 
   <section id="home-screen" class="home">
