@@ -218,7 +218,7 @@
       <a class="header-brand" onclick="goHome()"><i class="fa-solid fa-book-open"></i> VoiceForge</a>
     </div>
     <div class="header-right">
-      <button id="main-menu-btn" onclick="goHome()" class="btn btn-outline" style="display:none;"><i class="fa-solid fa-house"></i><span class="hide-mobile">Main Menu</span></button>
+      <button id="main-menu-btn" onclick="goHome()" class="btn btn-outline"><i class="fa-solid fa-house"></i><span class="hide-mobile"> Home</span></button>
     </div>
   </header>
 
@@ -450,7 +450,7 @@
         else el.style.display = s === id ? '' : 'none';
       });
       document.querySelector('.menu-toggle').style.display = id === 'story-screen' ? '' : 'none';
-      document.getElementById('main-menu-btn').style.display = id === 'home-screen' ? 'none' : '';
+      // home button always visible
     }
     function goHome() { stopPlayback(); stopActiveRecording(); showOnly('home-screen'); }
     function openStory(index) {
