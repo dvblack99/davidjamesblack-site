@@ -1,0 +1,102 @@
+{
+  "title": "The Last Light on Signal Hill",
+  "subtitle": "A Visitable Fiction Audio Series \u2022 Signal Hill, St. John\u2019s, Newfoundland \u2022 1942\u20131945",
+  "description": "This is a work of fiction inspired by real places. All characters are fictional. The espionage and cover-up described are invented, though the radar station on Signal Hill and the harsh conditions for women in wartime auxiliary roles are historically documented. History is always incomplete \u2014 written by some voices, remembered by others. We invite curiosity, not definitive claims.",
+  "runningTime": "62 minutes (six episodes)",
+  "cover_image": "images/signal-hill/cover.jpg",
+  "episodes": [
+    {
+      "episodeNumber": 1,
+      "title": "Episode One \u2014 \u201cThe Light Still Burns\u201d",
+      "script": [
+        { "id": 1, "speaker": "Narrator", "text": "It is June 1945. The war in Europe is over. Signal Hill stands quiet under the Atlantic wind. Tourists walk the trails where soldiers once scanned the sky for U-boats. A small plaque remembers the radar station. No one mentions the woman who kept the last light burning." },
+        { "id": 2, "speaker": "Narrator", "text": "Eleanor Voss stands at the overlook, coat pulled tight against the salt air. She watches the sea that once carried secrets and now carries only gulls. The concrete bunker behind her is sealed. The records inside were burned months ago. But some lights refuse to go out." }
+      ]
+    },
+    {
+      "episodeNumber": 2,
+      "title": "Episode Two \u2014 \u201cThe Final Transmission\u201d",
+      "script": [
+        { "id": 3, "speaker": "Narrator", "text": "Three months earlier. The radar station is being dismantled. Eleanor sits alone in the operations hut, headphones on, listening to the last faint signals from across the Atlantic. She knows the message she is about to send will end more than the war." },
+        { "id": 4, "speaker": "Eleanor", "text": "This is the last one. After this, everything goes dark." }
+      ]
+    },
+    {
+      "episodeNumber": 3,
+      "title": "Episode Three \u2014 \u201cThe Accusation\u201d",
+      "script": [
+        { "id": 5, "speaker": "Narrator", "text": "Five months earlier. Lieutenant Thomas Hale confronts Eleanor in the supply room. He has found the altered logbooks. He knows she has been feeding false coordinates to protect a convoy that never existed on paper." },
+        { "id": 6, "speaker": "Thomas", "text": "You erased an entire ship from the record, Ellie. Why?" }
+      ]
+    },
+    {
+      "episodeNumber": 4,
+      "title": "Episode Four \u2014 \u201cThe Night Watch\u201d",
+      "script": [
+        { "id": 7, "speaker": "Narrator", "text": "Eight months earlier. During a brutal winter storm, Eleanor and Corporal Daniel Levesque keep watch together. The radar screen flickers with ghosts. Daniel shares a cigarette and a secret: he is not who his papers say he is." },
+        { "id": 8, "speaker": "Daniel", "text": "If they find out what I really am, they\u2019ll send me back. And back is worse than any U-boat." }
+      ]
+    },
+    {
+      "episodeNumber": 5,
+      "title": "Episode Five \u2014 \u201cThe First Shift\u201d",
+      "script": [
+        { "id": 9, "speaker": "Narrator", "text": "Fourteen months earlier. Eleanor arrives at Signal Hill on her first day as a radar operator. The wind nearly knocks her off the path. Lieutenant Hale greets her with a clipboard and a warning: women don\u2019t last long up here." },
+        { "id": 10, "speaker": "Thomas", "text": "Keep your head down, Voss. This hill sees everything." }
+      ]
+    },
+    {
+      "episodeNumber": 6,
+      "title": "Episode Six \u2014 \u201cBefore the First Watch\u201d",
+      "script": [
+        { "id": 11, "speaker": "Narrator", "text": "The very beginning. Signal Hill is still just rock and grass and wind. No radar towers. No bunkers. No war has reached this far north yet. Eleanor Voss is still in St. John\u2019s, working as a typist, dreaming of something bigger than filing reports. The light on the hill has not yet been lit. But the story has already begun." }
+      ]
+    }
+  ],
+  "characters": [
+    {
+      "name": "Narrator",
+      "full_name": "Narrator",
+      "image": "images/signal-hill/narrator.jpg",
+      "summary": "Quiet, reflective storyteller who knows the ending because they are telling it backward.",
+      "background": "The narrator of Signal Hill knows how this story ends before it begins \u2014 because the series is told in reverse chronology. They open in June 1945 with the war over and the records burned, then unspool backward through the choices that led to that moment. This gives the narrator a quality of elegy \u2014 every scene is suffused with the knowledge of what\u2019s coming, even as the characters don\u2019t yet know. The narrator carries the Atlantic wind, the isolation of the hilltop station, and the weight of secrets that outlast the war that created them.",
+      "traits": ["Elegiac \u2014 knows the cost of every choice before it\u2019s made", "Spare and precise \u2014 matches the stripped-down landscape of the Newfoundland coast", "Patient with silence \u2014 lets the wind and the radar hum do narrative work", "Slightly haunted \u2014 not dramatic about it, but the tone carries loss", "Never sentimental, even when the material is devastating"],
+      "motivations": "To show that some acts of moral courage are invisible by design \u2014 they happen in logbooks, in altered coordinates, in records that get burned before anyone reads them. The narrator wants the listener to understand that the absence of evidence is not the evidence of absence.",
+      "role": "The narrator frames every episode, provides the reverse-chronology anchoring (\u2018three months earlier,\u2019 \u2018eight months earlier\u2019), and carries the descriptive weight of the setting \u2014 the wind, the cold, the radar screens, the Atlantic. They are the one who knows what the burned records contained.",
+      "voice_notes": "Quieter and more reflective than the Poured in Place narrator. Think of someone standing at an overlook on a cold day, telling you about something that happened here a long time ago. The pacing should feel like the wind \u2014 steady, unhurried, with occasional gusts of intensity. The reverse-chronology structure means the narrator sometimes knows things the characters don\u2019t, and that knowledge should sit in the pauses, not in the words."
+    },
+    {
+      "name": "Eleanor",
+      "full_name": "Eleanor Voss",
+      "image": "images/signal-hill/eleanor.jpg",
+      "summary": "A 22-year-old radar operator who becomes a guardian of dangerous truths.",
+      "background": "Eleanor Voss was a typist in St. John\u2019s before she joined the auxiliary service. She was looking for purpose \u2014 something bigger than filing reports in an office that smelled like carbon paper. Signal Hill gave her that purpose, and then gave her something she didn\u2019t ask for: a secret that could destroy a man\u2019s life if it got out, and the power to protect him by altering the official record. She is not a spy. She is not a trained operative. She is a young woman who learned to read radar screens and then learned that what you choose not to record is as powerful as what you do.",
+      "traits": ["Quietly determined \u2014 doesn\u2019t announce her courage, just acts on it", "Precise with instruments and with words", "Lonely in a way she doesn\u2019t fully acknowledge \u2014 the hilltop posting is isolating", "Protective of people she believes in, even at personal cost", "Stubborn once she\u2019s decided something is right", "Has a dark, dry humour that surfaces in exhaustion"],
+      "motivations": "Eleanor is driven by a simple moral instinct: if she can prevent someone from being destroyed by a system that doesn\u2019t care about them, she will. She didn\u2019t set out to falsify records or erase ships from logs. She set out to keep one person safe. Each subsequent lie was a consequence of the first choice, and she accepted every consequence because the alternative \u2014 letting Daniel be sent back \u2014 was worse than any punishment she could face.",
+      "role": "Eleanor is the protagonist. She alters logbooks and feeds false coordinates to protect Daniel Levesque from discovery. She sends the final transmission that closes the station. She stands at the overlook after the war, knowing that the records have been burned and her choices are now invisible. She kept the last light burning \u2014 not the literal one on Signal Hill, but the moral one: the refusal to let a person be erased for being who they are.",
+      "voice_notes": "Young but steady. Eleanor doesn\u2019t sound like a girl playing at war \u2014 she sounds like someone who grew up fast in a cold place. Her voice should carry the wind and the fatigue. When she says \u2018This is the last one. After this, everything goes dark,\u2019 it should feel like someone closing a door they know won\u2019t open again. Not dramatic. Final. She\u2019s practical even in emotional moments. Avoid making her sound breathless or overwhelmed \u2014 she\u2019s the kind of person who falls apart after the crisis, not during it."
+    },
+    {
+      "name": "Daniel",
+      "full_name": "Daniel Levesque",
+      "image": "images/signal-hill/daniel.jpg",
+      "summary": "A quiet corporal with a hidden identity that makes him a target in wartime Newfoundland.",
+      "background": "Daniel Levesque\u2019s papers say he is a French-Canadian from Qu\u00e9bec. His papers are not entirely accurate. The truth about Daniel \u2014 his real background, his real identity \u2014 would make him a liability in the eyes of the military, a security risk on paper, and a target in practice. He came to Signal Hill because remote postings don\u2019t ask as many questions. He keeps his head down. He does his job. He watches the radar screens and doesn\u2019t talk about what he sees in them or in himself. The war gave him a uniform and a name that fit well enough. Peace will take both away.",
+      "traits": ["Quiet and watchful \u2014 has learned that visibility is danger", "Competent and steady under pressure \u2014 good at his job in a way that doesn\u2019t draw attention", "Guarded with everyone except Eleanor, and even with her it takes months", "Carries a deep sadness that he\u2019s learned to fold small enough to fit in a pocket", "Capable of sudden, disarming honesty when he trusts someone", "Has a gentleness that doesn\u2019t match his surroundings"],
+      "motivations": "Daniel wants to survive the war without being sent back to whatever \u2018back\u2019 means for him. He didn\u2019t ask Eleanor to protect him \u2014 she chose to, and that choice haunts and sustains him in equal measure. His deepest fear is that his presence will destroy her the way it has destroyed every safe place he\u2019s ever found. His deepest need is to be known by one person and not rejected for it.",
+      "role": "Daniel is the secret at the centre of the story. His hidden identity is what Eleanor discovers during a night watch, what she chooses to protect by altering the station\u2019s records, and what Lieutenant Hale eventually uncovers. Daniel doesn\u2019t drive the plot through action \u2014 he drives it through vulnerability. His confession to Eleanor during the winter storm is the moment that transforms her from a radar operator into a guardian of dangerous truths.",
+      "voice_notes": "Soft-spoken, with traces of a French-Canadian accent that may or may not be entirely natural. Daniel speaks carefully \u2014 not because he\u2019s slow, but because he\u2019s editing in real time, always aware of what he can and can\u2019t say. When he finally tells Eleanor the truth, the careful editing stops and the real voice comes through \u2014 rougher, more vulnerable, with the cadence of someone who has practiced this confession in his head a thousand times and is terrified to say it out loud. His line \u2018If they find out what I really am, they\u2019ll send me back\u2019 should land like a stone dropped into still water."
+    },
+    {
+      "name": "Thomas",
+      "full_name": "Lieutenant Thomas Hale",
+      "image": "images/signal-hill/thomas.jpg",
+      "summary": "By-the-book station commander who believes rules and records are what win wars.",
+      "background": "Lieutenant Thomas Hale runs the Signal Hill radar station with the rigid discipline of a man who believes that order is the only thing standing between civilization and chaos. He\u2019s not wrong about that \u2014 the Atlantic is full of U-boats, and a radar station that doesn\u2019t maintain accurate records is a radar station that gets people killed. He\u2019s a career military officer, not brilliant but thorough, ambitious in a way that\u2019s methodical rather than flashy. He warned Eleanor on her first day that women don\u2019t last long on Signal Hill. He wasn\u2019t being cruel \u2014 he was being accurate about the conditions. He respects competence regardless of gender, but he respects the chain of command more.",
+      "traits": ["Rigid and procedural \u2014 the logbook is sacred", "Genuinely believes that accurate records save lives", "Not personally cruel, but capable of institutional cruelty without flinching", "Respects Eleanor\u2019s competence, which makes his discovery of her deception feel like a personal betrayal", "Ambitious \u2014 protecting his career and his station\u2019s record", "More complicated than he appears \u2014 his final choice in the story may surprise"],
+      "motivations": "Hale wants his station to run correctly. He wants his records to be accurate. He wants to advance his career. When he discovers that Eleanor has been altering logbooks, his world cracks \u2014 not because he\u2019s a zealot, but because she was the one person on the hill he trusted to be exact. His confrontation with her is driven by genuine bewilderment as much as anger. He can\u2019t understand why someone would risk everything to protect one person when the system is designed to protect everyone.",
+      "role": "Hale is the antagonist, but not the villain \u2014 the system is the villain, and Hale is its most faithful servant. He discovers the altered logbooks. He confronts Eleanor. The question the story asks through him is whether following the rules is the same as doing the right thing, and the answer it gives is: sometimes those are the same thing, and sometimes they are opposites, and the tragedy is that you don\u2019t always know which until it\u2019s too late.",
+      "voice_notes": "Clipped, military, precise. Hale speaks in short sentences. He gives orders, not suggestions. But underneath the command voice there\u2019s a man who is genuinely shaken when he finds the altered records \u2014 his voice should crack slightly on \u2018You erased an entire ship from the record, Ellie. Why?\u2019 The use of \u2018Ellie\u2019 \u2014 not \u2018Voss\u2019 \u2014 is the tell. He cares about her, and that\u2019s what makes the discovery unbearable. Don\u2019t play him as a barking officer. Play him as a man whose faith in the system has just been broken by someone he respected."
+    }
+  ]
+}
