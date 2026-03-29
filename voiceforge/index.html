@@ -235,10 +235,7 @@
     <div class="story-main">
       <div class="story-toolbar">
         <h2 id="story-title"></h2>
-        <div style="display:flex;align-items:center;gap:10px;flex-shrink:0;">
-          <button id="play-pause-btn" class="btn-icon" onclick="togglePlayback()" aria-label="Play/Pause" style="display:none;"><i id="play-pause-icon" class="fa-solid fa-play"></i></button>
-          <span id="playback-hint" class="playback-hint">Tap &#9654; to listen</span>
-        </div>
+        <span id="playback-hint" class="playback-hint">Tap a word to begin</span>
       </div>
       <div id="full-script" class="script-body"></div>
     </div>
@@ -495,13 +492,11 @@
       container.innerHTML = html;
       wordSpans = Array.from(container.querySelectorAll('.word'));
 
-      // Desktop: click a word to seek & play from that point
+      // Single click a word → seek and play from that word (both desktop and mobile)
       container.querySelectorAll('.word').forEach(span => {
         span.addEventListener('click', (e) => {
           e.stopPropagation();
           if (activeRecBlock) return;
-          // On touch devices, single-tap on words does nothing (avoids scroll conflicts)
-          if (isTouchPrimary()) return;
           stopPlayback();
           currentLineIndex = parseInt(span.dataset.line);
           currentWordIndex = parseInt(span.dataset.word);
@@ -509,26 +504,33 @@
         });
       });
       container.querySelectorAll('.speaker-block').forEach(block => {
+        // Desktop: double-click to record
         block.addEventListener('dblclick', (e) => {
           e.preventDefault();
           if (activeRecBlock) return;
           promptRecord(parseInt(block.dataset.blockStart), parseInt(block.dataset.blockEnd), block.dataset.speaker);
         });
-        // Mobile: long-press (touchstart hold) to trigger record modal
+        // Mobile: long-press (500ms) to record — cancelled if finger moves (scroll)
         let longPressTimer = null;
+        let longPressTriggered = false;
         block.addEventListener('touchstart', (e) => {
           if (activeRecBlock) return;
+          longPressTriggered = false;
           longPressTimer = setTimeout(() => {
+            longPressTriggered = true;
             longPressTimer = null;
             promptRecord(parseInt(block.dataset.blockStart), parseInt(block.dataset.blockEnd), block.dataset.speaker);
           }, 500);
         }, { passive: true });
-        block.addEventListener('touchend', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } });
+        block.addEventListener('touchend', (e) => {
+          if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+          // If long press fired, suppress the click that follows
+          if (longPressTriggered) { e.preventDefault(); longPressTriggered = false; }
+        });
         block.addEventListener('touchmove', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } });
       });
-      // Desktop only: click background to pause/resume
+      // Click off text → pause if playing, resume if paused
       container.addEventListener('click', (e) => {
-        if (isTouchPrimary()) return;
         if (e.target.classList.contains('word')) return;
         if (activeRecBlock) return;
         if (isPlaying) stopPlayback();
@@ -540,29 +542,20 @@
 
     function updateHint() {
       const el = document.getElementById('playback-hint');
-      const btn = document.getElementById('play-pause-btn');
-      const icon = document.getElementById('play-pause-icon');
       const touch = isTouchPrimary();
-      btn.style.display = '';
       if (isPlaying) {
-        el.textContent = touch ? 'Playing…' : 'Click background to pause';
+        el.textContent = 'Tap anywhere to pause';
         el.classList.add('is-playing');
-        icon.className = 'fa-solid fa-pause';
       } else if (currentLineIndex > 0 || currentWordIndex > 0) {
-        el.textContent = touch ? 'Paused' : 'Paused — click background to resume';
+        el.textContent = 'Paused — tap a word to resume';
         el.classList.remove('is-playing');
-        icon.className = 'fa-solid fa-play';
       } else {
-        el.textContent = touch ? 'Press ▶ or hold a speaker block to record' : 'Click any word to begin';
+        el.textContent = touch ? 'Tap a word to begin · Hold block to record' : 'Click a word to begin · Double-click block to record';
         el.classList.remove('is-playing');
-        icon.className = 'fa-solid fa-play';
       }
     }
 
-    function togglePlayback() {
-      if (isPlaying) stopPlayback();
-      else startPlayback();
-    }
+
 
     /* ── CHARACTER LIST ── */
     function getRecordingFraction(speakerName) {
