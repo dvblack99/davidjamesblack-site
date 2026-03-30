@@ -1,0 +1,1408 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>VoiceForge • Hidden Histories</title>
+  <meta name="description" content="Record yourself performing classic stories with family and friends. A collaborative audio fiction experience.">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:wght@400;500;600;700&display=swap');
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #f5f0e8; --bg-warm: #ede6d8; --surface: #fffdf9;
+      --ink: #2c2118; --ink-soft: #5c4d3e; --ink-muted: #9a8d7f;
+      --accent: #c45d2c; --accent-hover: #a84b22;
+      --red: #b91c1c; --red-soft: #fee2e2;
+      --green: #15803d; --green-soft: #dcfce7;
+      --border: rgba(44,33,24,0.1); --border-hover: rgba(44,33,24,0.25);
+      --shadow-sm: 0 1px 3px rgba(44,33,24,0.06);
+      --shadow-md: 0 4px 16px rgba(44,33,24,0.08);
+      --shadow-lg: 0 8px 32px rgba(44,33,24,0.12);
+      --radius: 16px; --radius-sm: 10px; --header-h: 64px;
+    }
+    body { font-family:'DM Sans',system-ui,sans-serif; background:var(--bg); color:var(--ink); min-height:100vh; -webkit-font-smoothing:antialiased; overflow-x:hidden; padding-top:56px; }
+
+```
+.header { position:fixed;top:0;left:0;right:0;z-index:100;background:var(--surface);border-bottom:1px solid var(--border);height:var(--header-h);display:flex;flex-direction:row;align-items:center;padding:0 24px;box-shadow:var(--shadow-sm); }
+.header-brand { display:flex;align-items:center;gap:12px;font-family:'EB Garamond',Georgia,serif;font-size:1.5rem;font-weight:600;color:var(--ink);text-decoration:none;cursor:pointer;flex:1; }
+.header-brand i { color:var(--accent);font-size:1.3rem; }
+.btn { display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border:none;border-radius:var(--radius-sm);font-family:inherit;font-size:0.875rem;font-weight:600;cursor:pointer;transition:all 0.2s; }
+.btn-ghost { background:transparent;color:var(--ink-soft);padding:8px 14px; }
+.btn-ghost:hover { background:var(--bg-warm);color:var(--ink); }
+.btn-accent { background:var(--accent);color:white; }
+.btn-accent:hover { background:var(--accent-hover); }
+.btn-outline { background:transparent;color:var(--ink-soft);border:1px solid var(--border);padding:8px 16px; }
+.btn-outline:hover { border-color:var(--border-hover);color:var(--ink);background:var(--bg); }
+.btn-icon { width:44px;height:44px;padding:0;display:flex;align-items:center;justify-content:center;border-radius:12px;border:1px solid var(--border);background:var(--surface);cursor:pointer;transition:all 0.2s; }
+.btn-icon:hover { border-color:var(--border-hover);box-shadow:var(--shadow-sm); }
+
+.home { max-width:800px;margin:0 auto;padding:48px 24px; }
+.home h2 { font-family:'EB Garamond',Georgia,serif;font-size:2.25rem;font-weight:500;text-align:center;margin-bottom:48px; }
+.project-grid { display:grid;gap:20px; }
+.project-card { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:0;cursor:pointer;transition:all 0.25s;position:relative;overflow:hidden;display:flex; }
+.project-card::before { content:'';position:absolute;left:0;top:0;bottom:0;width:4px;background:var(--accent);transform:scaleY(0);transition:transform 0.25s;z-index:1; }
+.project-card:hover { border-color:var(--border-hover);box-shadow:var(--shadow-md);transform:translateY(-2px); }
+.project-card:hover::before { transform:scaleY(1); }
+.project-cover { width:140px;flex-shrink:0;background:var(--bg-warm);object-fit:cover; }
+.project-cover-placeholder { width:140px;flex-shrink:0;background:var(--bg-warm);display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:2.5rem; }
+.project-info { padding:28px 32px;flex:1;min-width:0; }
+.project-info h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.75rem;font-weight:500; }
+.project-info .meta { margin-top:8px;font-size:0.875rem;color:var(--ink-muted); }
+.project-info .subtitle { margin-top:6px;font-size:0.82rem;color:var(--ink-soft);line-height:1.4; }
+
+.story-view { display:none;height:100vh;padding-top:56px; }
+.story-view.active { display:flex; }
+.sidebar { width:280px;flex-shrink:0;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow:hidden; }
+.sidebar-header { padding:20px 20px 16px;border-bottom:1px solid var(--border); }
+.sidebar-header h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.25rem;font-weight:600; }
+.sidebar-body { flex:1;overflow-y:auto;padding:12px; }
+.char-item { display:flex;align-items:center;gap:12px;padding:12px;border-radius:var(--radius-sm);cursor:pointer;transition:all 0.15s;border:1px solid transparent; }
+.char-item:hover { background:var(--bg);border-color:var(--border); }
+.char-avatar { width:40px;height:40px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-family:'EB Garamond',Georgia,serif;font-size:1.2rem;font-weight:600;flex-shrink:0;overflow:hidden; }
+.char-avatar img { width:100%;height:100%;object-fit:cover; }
+.char-info { flex:1;min-width:0; }
+.char-name { font-weight:600;font-size:0.9rem; }
+.char-summary-short { font-size:0.78rem;color:var(--ink-muted);line-height:1.4;margin-top:2px; }
+.char-rec-fraction { font-size:0.72rem;font-weight:700;padding:2px 8px;border-radius:8px;white-space:nowrap;flex-shrink:0; }
+.char-rec-fraction.none { background:var(--bg-warm);color:var(--ink-muted); }
+.char-rec-fraction.partial { background:#fef3c7;color:#92400e; }
+.char-rec-fraction.complete { background:var(--green-soft);color:var(--green); }
+
+.story-main { flex:1;display:flex;flex-direction:column;min-width:0; }
+.story-toolbar { display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px 24px;background:var(--surface);border-bottom:1px solid var(--border);flex-shrink:0; }
+.story-toolbar h2 { font-family:'EB Garamond',Georgia,serif;font-size:1.5rem;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0; }
+.playback-hint { font-size:0.78rem;color:var(--ink-muted);flex-shrink:0; }
+.playback-hint.is-playing { color:var(--accent);font-weight:600; }
+
+.script-body { flex:1;overflow-y:auto;padding:32px 40px;background:var(--surface);-webkit-overflow-scrolling:touch;touch-action:manipulation; }
+.speaker-block { margin:24px 0;padding:16px 20px;border-left:4px solid;border-radius:0 var(--radius-sm) var(--radius-sm) 0;background:rgba(0,0,0,0.015);cursor:default;transition:background 0.2s,box-shadow 0.2s;position:relative;-webkit-user-select:none;user-select:none; }
+.speaker-block:hover { background:rgba(0,0,0,0.03); }
+.speaker-block.has-recording::after { content:'\f130';font-family:'Font Awesome 6 Free';font-weight:900;position:absolute;top:12px;right:14px;font-size:0.7rem;color:var(--green);opacity:0.7; }
+.speaker-block.recording-active { background:rgba(185,28,28,0.06);box-shadow:inset 0 0 0 2px var(--red);animation:rec-pulse 1.5s ease-in-out infinite; }
+@keyframes rec-pulse { 0%,100%{box-shadow:inset 0 0 0 2px var(--red);} 50%{box-shadow:inset 0 0 0 2px rgba(185,28,28,0.3);} }
+.speaker-label { font-family:'DM Sans',sans-serif;font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.08em;margin-bottom:8px;opacity:0.6;display:flex;align-items:center;gap:8px; }
+.speaker-thumb { width:22px;height:22px;border-radius:6px;object-fit:cover;opacity:1; }
+.speaker-text { font-family:'EB Garamond',Georgia,serif;font-size:1.15rem;line-height:1.85; }
+.dblclick-hint { font-family:'DM Sans',sans-serif;font-size:0.68rem;color:var(--ink-muted);margin-top:10px;opacity:0;transition:opacity 0.2s; }
+.speaker-block:hover .dblclick-hint { opacity:1; }
+.word { transition:background 0.12s,color 0.12s;cursor:pointer;padding:1px 3px;border-radius:3px; }
+.word:hover { background:rgba(196,93,44,0.1); }
+.word.active { font-weight:700;background:rgba(196,93,44,0.22);color:var(--accent); }
+
+.char-bio { display:none;max-width:680px;margin:0 auto;padding:36px 24px 60px; }
+.char-bio.active { display:block; }
+.back-link { display:inline-flex;align-items:center;gap:6px;font-size:0.9rem;color:var(--accent);text-decoration:none;cursor:pointer;margin-bottom:28px;font-weight:600; }
+.back-link:hover { text-decoration:underline; }
+.bio-hero { background:var(--surface);border-radius:var(--radius);padding:36px;box-shadow:var(--shadow-md);margin-bottom:28px; }
+.bio-hero-top { display:flex;align-items:center;gap:24px;margin-bottom:24px; }
+.bio-avatar { width:88px;height:88px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-family:'EB Garamond',Georgia,serif;font-size:3rem;font-weight:600;flex-shrink:0;overflow:hidden; }
+.bio-avatar img { width:100%;height:100%;object-fit:cover; }
+.bio-hero h2 { font-family:'EB Garamond',Georgia,serif;font-size:2.2rem;font-weight:500; }
+.bio-hero .bio-tagline { color:var(--ink-muted);margin-top:4px;font-size:0.95rem;font-style:italic; }
+.bio-section { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:24px;margin-bottom:16px; }
+.bio-section h4 { font-family:'EB Garamond',Georgia,serif;font-size:1.15rem;font-weight:600;margin-bottom:12px;display:flex;align-items:center;gap:10px; }
+.bio-section h4 i { font-size:0.85rem;color:var(--accent); }
+.bio-section p,.bio-section ul { font-size:0.9rem;color:var(--ink-soft);line-height:1.7; }
+.bio-section ul { list-style:none;padding:0; }
+.bio-section ul li { padding:6px 0 6px 20px;position:relative; }
+.bio-section ul li::before { content:'';position:absolute;left:0;top:14px;width:8px;height:8px;border-radius:50%;background:var(--accent);opacity:0.5; }
+
+.modal-overlay { display:none;position:fixed;inset:0;background:rgba(44,33,24,0.5);z-index:300;align-items:center;justify-content:center; }
+.modal-overlay.open { display:flex; }
+.modal { background:var(--surface);border-radius:20px;padding:36px 40px;max-width:420px;width:90%;box-shadow:var(--shadow-lg);text-align:center;animation:modal-in 0.25s ease-out; }
+@keyframes modal-in { from{opacity:0;transform:scale(0.95) translateY(8px);} to{opacity:1;transform:scale(1) translateY(0);} }
+.modal-icon { width:64px;height:64px;border-radius:20px;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;font-size:1.6rem; }
+.modal h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.5rem;font-weight:500;margin-bottom:8px; }
+.modal p { color:var(--ink-muted);font-size:0.9rem;margin-bottom:24px;line-height:1.5; }
+.modal-actions { display:flex;gap:12px;justify-content:center;flex-wrap:wrap; }
+
+.rec-banner { display:none;position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:250;background:var(--red);color:white;padding:14px 28px;border-radius:50px;font-weight:600;font-size:0.9rem;box-shadow:0 6px 24px rgba(185,28,28,0.35);align-items:center;gap:12px; }
+.rec-banner.visible { display:flex;animation:banner-in 0.3s ease-out; }
+@keyframes banner-in { from{opacity:0;transform:translateX(-50%) translateY(12px);} to{opacity:1;transform:translateX(-50%) translateY(0);} }
+.rec-dot { width:10px;height:10px;border-radius:50%;background:white;animation:blink 1s infinite; }
+@keyframes blink { 0%,100%{opacity:1;} 50%{opacity:0.3;} }
+
+.mobile-drawer-overlay { display:none;position:fixed;inset:0;background:rgba(44,33,24,0.35);z-index:200;opacity:0;transition:opacity 0.25s; }
+.mobile-drawer-overlay.open { opacity:1; }
+.mobile-drawer { position:fixed;left:0;top:0;bottom:0;width:300px;max-width:85vw;background:var(--surface);z-index:201;transform:translateX(-100%);transition:transform 0.3s cubic-bezier(0.4,0,0.2,1);display:flex;flex-direction:column;overflow:hidden; }
+.mobile-drawer.open { transform:translateX(0); }
+.mobile-drawer-header { padding:20px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+.mobile-drawer-header h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.25rem; }
+.mobile-drawer-body { flex:1;overflow-y:auto;padding:12px; }
+
+.diff-match { color:var(--green); } .diff-miss { color:var(--red);text-decoration:line-through;opacity:0.6; }
+.diff-extra { color:var(--accent);font-style:italic; }
+.diff-ok { background:var(--green-soft);color:var(--green);padding:4px 12px;border-radius:8px; }
+.diff-warn { background:#fef3c7;color:#92400e;padding:4px 12px;border-radius:8px; }
+.diff-bad { background:var(--red-soft);color:var(--red);padding:4px 12px;border-radius:8px; }
+
+/* ── STORY BUILDER ── */
+#builder-screen { display:none; height:100vh; padding-top:56px; }
+#builder-screen.active { display:flex; }
+.builder-split { display:flex; width:100%; height:100%; }
+.builder-preview { flex:1; background:var(--surface); border-right:1px solid var(--border); display:flex; flex-direction:column; overflow:hidden; }
+.builder-chat { flex:1; display:flex; flex-direction:column; background:var(--bg); }
+.preview-header { padding:20px 24px; border-bottom:1px solid var(--border); background:var(--surface); }
+.premise-box { background:var(--bg-warm); border-radius:var(--radius); padding:20px; cursor:pointer; position:relative; margin-bottom:16px; }
+.premise-box:hover { box-shadow:var(--shadow-sm); }
+.premise-label { font-size:0.75rem; font-weight:700; letter-spacing:1px; color:var(--accent); margin-bottom:8px; }
+.premise-text { font-family:'EB Garamond',Georgia,serif; font-size:1.05rem; line-height:1.6; color:var(--ink-soft); }
+.builder-toolbar { display:flex; align-items:center; gap:12px; flex-wrap:wrap; }
+.builder-toolbar .btn { padding:8px 16px; font-size:0.82rem; }
+.builder-script { flex:1; overflow-y:auto; padding:32px 40px; -webkit-overflow-scrolling:touch; }
+.builder-script .speaker-block { cursor:pointer; }
+.chat-header { padding:16px 24px; background:var(--surface); border-bottom:1px solid var(--border); font-weight:600; font-family:'EB Garamond',Georgia,serif; font-size:1.15rem; }
+.chat-log { flex:1; overflow-y:auto; padding:24px; display:flex; flex-direction:column; gap:16px; -webkit-overflow-scrolling:touch; }
+.chat-message { max-width:80%; padding:14px 18px; border-radius:18px; line-height:1.5; font-size:0.92rem; }
+.chat-user { align-self:flex-end; background:var(--accent); color:white; border-bottom-right-radius:4px; }
+.chat-ai { align-self:flex-start; background:var(--surface); border:1px solid var(--border); color:var(--ink-soft); }
+.chat-system { align-self:center; background:transparent; color:var(--ink-muted); font-size:0.82rem; font-style:italic; padding:4px 12px; }
+.chat-input-area { padding:16px 24px; background:var(--surface); border-top:1px solid var(--border); }
+.chat-input-wrapper { display:flex; gap:12px; align-items:flex-end; }
+.chat-input { flex:1; min-height:52px; max-height:160px; padding:14px 20px; border:1px solid var(--border); border-radius:9999px; resize:none; font-family:inherit; font-size:0.95rem; background:var(--bg); color:var(--ink); }
+.chat-input:focus { outline:none; border-color:var(--accent); }
+.story-length-control { display:flex; align-items:center; gap:8px; font-size:0.85rem; white-space:nowrap; color:var(--ink-muted); }
+.story-length-control input { width:80px; padding:6px 10px; border:1px solid var(--border); border-radius:var(--radius-sm); font-family:inherit; font-size:0.85rem; }
+.elements-list { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:16px; padding:8px 0; }
+.element-card { background:var(--bg); border:1px solid var(--border); border-radius:var(--radius-sm); padding:16px; }
+.element-name { font-family:'EB Garamond',Georgia,serif; font-size:1.15rem; font-weight:500; }
+.element-desc { font-size:0.88rem; color:var(--ink-soft); margin-top:6px; line-height:1.5; }
+.modal-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; }
+.modal-tabs { display:flex; gap:8px; margin-bottom:20px; border-bottom:1px solid var(--border); }
+.modal-tab { padding:10px 20px; cursor:pointer; border-radius:8px 8px 0 0; font-size:0.9rem; color:var(--ink-muted); transition:all 0.15s; }
+.modal-tab.active { background:var(--bg-warm); font-weight:600; color:var(--ink); }
+.modal-tab:hover { color:var(--ink); }
+#voice-guidance-section { margin-top:24px; padding:20px 24px; background:var(--bg-warm); border-radius:12px; text-align:left; }
+#voice-guidance-section strong { display:block; font-size:0.75rem; font-weight:700; letter-spacing:1px; color:var(--accent); margin-bottom:10px; text-transform:uppercase; }
+#voice-guidance { font-size:0.92rem; line-height:1.65; color:var(--ink-soft); white-space:pre-line; }
+
+/* ── SELFIE / CHARACTER PHOTO ── */
+.selfie-modal { background:var(--surface);border-radius:20px;padding:0;max-width:500px;width:95%;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:modal-in 0.25s ease-out; }
+.selfie-header { padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+.selfie-header h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.3rem;font-weight:500; }
+.selfie-video-wrap { position:relative;background:#000;aspect-ratio:1;overflow:hidden; }
+.selfie-video-wrap video { width:100%;height:100%;object-fit:cover;transform:scaleX(-1); }
+.selfie-shutter { position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:white;border:4px solid rgba(255,255,255,0.5);cursor:pointer;transition:transform 0.1s; }
+.selfie-shutter:active { transform:translateX(-50%) scale(0.9); }
+.selfie-shutter-inner { width:48px;height:48px;border-radius:50%;background:white;margin:4px;border:2px solid #ccc; }
+.selfie-count { position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:white;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600; }
+.selfie-thumbs { display:flex;gap:8px;padding:12px 16px;overflow-x:auto;background:var(--bg); }
+.selfie-thumb { width:60px;height:60px;border-radius:10px;object-fit:cover;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border-color 0.15s; }
+.selfie-thumb:hover { border-color:var(--accent); }
+.selfie-thumb-empty { width:60px;height:60px;border-radius:10px;background:var(--bg-warm);border:2px dashed var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:1.2rem; }
+.selfie-actions { padding:16px 20px;display:flex;gap:12px;justify-content:flex-end;border-top:1px solid var(--border); }
+.generate-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px; }
+.generate-option { border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;border:3px solid transparent;transition:border-color 0.2s;aspect-ratio:1;background:var(--bg-warm); }
+.generate-option:hover { border-color:var(--accent); }
+.generate-option.selected { border-color:var(--accent); }
+.generate-option img { width:100%;height:100%;object-fit:cover; }
+.generate-loading { text-align:center;padding:40px 20px; }
+.generate-loading .spinner { width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
+@media (max-width:768px) {
+  :root { --header-h:56px; }
+  .header { padding:0 16px; } .header-brand { font-size:1.25rem;gap:10px; } .header-brand i { font-size:1.1rem; }
+  .btn span.hide-mobile { display:none; }
+  .home { padding:32px 16px; } .home h2 { font-size:1.75rem;margin-bottom:32px; }
+  .project-card { padding:0; } .project-info h3 { font-size:1.35rem; }
+  .project-cover, .project-cover-placeholder { width:100px; }
+  .project-info { padding:20px; }
+  .sidebar { display:none; }
+  .mobile-drawer-overlay { display:block;pointer-events:none; } .mobile-drawer-overlay.open { pointer-events:auto; }
+  .story-toolbar { padding:10px 16px; } .story-toolbar h2 { font-size:1.15rem; }
+  .script-body { padding:20px 16px; } .speaker-text { font-size:1.05rem; }
+  .dblclick-hint { display:none; }
+  .char-bio { padding:24px 16px 48px; } .bio-hero { padding:24px; }
+  .bio-hero-top { flex-direction:column;text-align:center;gap:16px; }
+  .bio-avatar { width:72px;height:72px;font-size:2.4rem; } .bio-hero h2 { font-size:1.6rem; }
+  .modal { padding:28px 24px; }
+  .rec-banner { font-size:0.8rem;padding:12px 20px; }
+  .builder-split { flex-direction:column; }
+  .builder-preview { height:40%; border-right:none; border-bottom:1px solid var(--border); }
+  .builder-chat { height:60%; }
+  .builder-script { padding:16px; }
+  .builder-toolbar { gap:8px; }
+  .story-length-control { font-size:0.78rem; }
+  .story-length-control input { width:60px; }
+}
+@media (min-width:769px) { .menu-toggle { display:none !important; } }
+```
+
+  </style>
+</head>
+<body>
+  <header style="position:fixed;top:0;left:0;right:0;height:56px;z-index:1000;background:#fffdf9;border-bottom:1px solid rgba(44,33,24,0.1);display:flex;flex-direction:row;align-items:center;padding:0 16px;gap:12px;box-shadow:0 1px 3px rgba(44,33,24,0.06);">
+    <button id="menu-toggle-btn" onclick="toggleDrawer()" aria-label="Characters" style="display:none;width:40px;height:40px;border:1px solid rgba(44,33,24,0.1);border-radius:10px;background:#fffdf9;flex-shrink:0;cursor:pointer;"><i class="fa-solid fa-users" style="color:#c45d2c;"></i></button>
+    <a onclick="goHome()" style="display:flex;align-items:center;gap:10px;font-family:'EB Garamond',Georgia,serif;font-size:1.4rem;font-weight:600;color:#2c2118;text-decoration:none;cursor:pointer;flex:1;"><i class="fa-solid fa-book-open" style="color:#c45d2c;"></i> VoiceForge</a>
+    <button id="main-menu-btn" onclick="goHome()" title="Home" style="width:40px;height:40px;border:1px solid rgba(44,33,24,0.1);border-radius:10px;background:#fffdf9;flex-shrink:0;cursor:pointer;"><i class="fa-solid fa-house" style="color:#5c4d3e;"></i></button>
+  </header>
+
+  <section id="home-screen" class="home">
+    <h2>Available Projects</h2>
+    <div id="project-list" class="project-grid"></div>
+  </section>
+
+  <section id="story-screen" class="story-view">
+    <aside class="sidebar">
+      <div class="sidebar-header"><h3>Characters</h3></div>
+      <div class="sidebar-body" id="sidebar-chars"></div>
+    </aside>
+    <div class="story-main">
+      <div class="story-toolbar">
+        <h2 id="story-title"></h2>
+        <span id="playback-hint" class="playback-hint">Tap a word to begin</span>
+      </div>
+      <div id="full-script" class="script-body"></div>
+    </div>
+  </section>
+
+  <section id="char-bio-screen" class="char-bio">
+    <a class="back-link" onclick="backToStory()"><i class="fa-solid fa-arrow-left"></i> Back to Story</a>
+    <div id="bio-content"></div>
+  </section>
+
+  <!-- STORY BUILDER -->
+
+  <section id="builder-screen" class="builder-split">
+    <div class="builder-preview">
+      <div class="preview-header">
+        <div class="premise-box">
+          <div class="premise-label">STORY PREMISE</div>
+          <div id="premise-text" class="premise-text">Your story will appear here as you build it…</div>
+        </div>
+        <div class="builder-toolbar">
+          <button class="btn btn-outline" onclick="showElementsModal('characters')"><i class="fa-solid fa-users"></i> Characters</button>
+          <button class="btn btn-outline" onclick="showElementsModal('locations')"><i class="fa-solid fa-map-pin"></i> Locations</button>
+          <button class="btn btn-outline" onclick="showElementsModal('things')"><i class="fa-solid fa-cube"></i> Things</button>
+          <div style="margin-left:auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap;">
+            <div class="story-length-control">
+              <span>Target:</span>
+              <input type="number" id="target-words" value="800" min="200" step="100">
+              <span>words</span>
+            </div>
+            <button class="btn btn-ghost" onclick="showApiKeyModal()"><i class="fa-solid fa-key"></i></button>
+            <button class="btn btn-accent" onclick="saveBuilderStory()"><i class="fa-solid fa-download"></i> Save</button>
+          </div>
+        </div>
+      </div>
+      <div id="builder-script" class="builder-script">
+        <p style="text-align:center;color:var(--ink-muted);padding:60px 20px;">Start chatting to build your story.</p>
+      </div>
+    </div>
+    <div class="builder-chat">
+      <div class="chat-header"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--accent);margin-right:8px;"></i> Story Builder</div>
+      <div id="chat-log" class="chat-log"></div>
+      <div class="chat-input-area">
+        <div class="chat-input-wrapper">
+          <textarea id="chat-input" class="chat-input" placeholder="Describe your story idea…" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();sendChatMessage();}"></textarea>
+          <button class="btn-icon" onclick="startVoiceInput()" title="Voice input"><i class="fa-solid fa-microphone"></i></button>
+          <button class="btn-accent" onclick="sendChatMessage()" style="border-radius:50%;width:52px;height:52px;flex-shrink:0;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="mobile-drawer-overlay" id="drawer-overlay" onclick="toggleDrawer()"></div>
+  <div class="mobile-drawer" id="drawer">
+    <div class="mobile-drawer-header"><h3>Characters</h3><button class="btn-icon" onclick="toggleDrawer()" aria-label="Close"><i class="fa-solid fa-xmark"></i></button></div>
+    <div class="mobile-drawer-body" id="drawer-chars"></div>
+  </div>
+
+  <div class="modal-overlay" id="rec-modal">
+    <div class="modal" style="max-width:580px;max-height:92vh;overflow-y:auto;padding:40px 44px;">
+      <div class="modal-icon" id="modal-icon" style="background:var(--red-soft);color:var(--red);"><i class="fa-solid fa-microphone"></i></div>
+      <h3 id="modal-title">Ready to narrate?</h3>
+      <p id="modal-body"></p>
+      <div id="voice-guidance-section" style="display:none;">
+        <strong>Voice &amp; Performance Guidance</strong>
+        <div id="voice-guidance"></div>
+      </div>
+      <div class="modal-actions" style="margin-top:24px;">
+        <button class="btn btn-ghost" onclick="cancelRecordModal()">Cancel</button>
+        <button class="btn btn-accent" onclick="confirmRecordModal()"><i class="fa-solid fa-microphone"></i> Start Recording</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="rec-banner" id="rec-banner" onclick="stopRecordingHandler(event)"><div class="rec-dot"></div><span id="rec-banner-text">Recording — double-click to stop</span></div>
+
+  <div class="modal-overlay" id="processing-modal">
+    <div class="modal">
+      <div class="modal-icon" style="background:var(--bg-warm);color:var(--accent);"><i class="fa-solid fa-wand-magic-sparkles"></i></div>
+      <h3>Processing audio…</h3>
+      <p id="processing-status">Cleaning up…</p>
+      <div style="margin-top:16px;background:var(--bg);border-radius:8px;height:12px;overflow:hidden;">
+        <div id="processing-bar" style="height:100%;width:0%;background:var(--accent);border-radius:8px;transition:width 0.4s ease;"></div>
+      </div>
+      <p id="processing-pct" style="margin-top:8px;font-size:0.78rem;color:var(--ink-muted);"></p>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="compare-modal">
+    <div class="modal" style="max-width:560px;max-height:92vh;overflow-y:auto;text-align:left;">
+      <h3 style="text-align:center;margin-bottom:16px;">Recording Review</h3>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);margin-bottom:8px;">Script (expected)</div>
+        <div id="compare-expected" style="font-family:'EB Garamond',Georgia,serif;font-size:1.05rem;line-height:1.7;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);color:var(--ink-soft);"></div>
+      </div>
+      <div style="margin-bottom:20px;">
+        <div style="font-size:0.72rem;font-weight:700;text-transform:uppercase;letter-spacing:0.06em;color:var(--ink-muted);margin-bottom:8px;">What you said</div>
+        <div id="compare-spoken" style="font-family:'EB Garamond',Georgia,serif;font-size:1.05rem;line-height:1.7;padding:12px 16px;background:var(--bg);border-radius:var(--radius-sm);"></div>
+      </div>
+      <div id="compare-verdict" style="text-align:center;font-size:0.9rem;font-weight:600;margin-bottom:20px;"></div>
+      <div style="display:flex;align-items:center;justify-content:center;gap:10px;margin-bottom:20px;">
+        <button class="btn btn-ghost" onclick="playCompareAudio()"><i class="fa-solid fa-play"></i> Listen</button>
+      </div>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" style="color:var(--red);" onclick="discardRecording()"><i class="fa-solid fa-trash"></i> Discard</button>
+        <button class="btn btn-ghost" onclick="retakeRecording()"><i class="fa-solid fa-rotate-left"></i> Retake</button>
+        <button class="btn btn-accent" onclick="acceptRecording()"><i class="fa-solid fa-check"></i> Accept</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ELEMENTS MODAL -->
+
+  <div class="modal-overlay" id="elements-modal">
+    <div class="modal" style="max-width:620px;max-height:88vh;display:flex;flex-direction:column;text-align:left;">
+      <div class="modal-header">
+        <h3>Story Elements</h3>
+        <button class="btn-icon" onclick="closeElementsModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="modal-tabs">
+        <div class="modal-tab active" id="tab-characters" onclick="switchElementsTab('characters')">Characters</div>
+        <div class="modal-tab" id="tab-locations" onclick="switchElementsTab('locations')">Locations</div>
+        <div class="modal-tab" id="tab-things" onclick="switchElementsTab('things')">Things</div>
+      </div>
+      <div id="elements-list" class="elements-list"></div>
+    </div>
+  </div>
+
+  <!-- API KEY MODAL -->
+
+  <div class="modal-overlay" id="apikey-modal">
+    <div class="modal" style="max-width:420px;">
+      <div class="modal-header">
+        <h3>Anthropic API Key</h3>
+        <button class="btn-icon" onclick="closeApiKeyModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <p style="color:var(--ink-muted);font-size:0.88rem;">Your key stays only in this browser session and is never sent anywhere except Anthropic's API.</p>
+      <input type="password" id="apikey-input" placeholder="sk-ant-…" style="width:100%;padding:12px 16px;border:1px solid var(--border);border-radius:var(--radius-sm);font-family:monospace;font-size:0.9rem;background:var(--bg);">
+      <div class="modal-actions" style="margin-top:20px;">
+        <button class="btn btn-ghost" onclick="closeApiKeyModal()">Cancel</button>
+        <button class="btn btn-accent" onclick="saveApiKey()">Save Key</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="lightbox" onclick="closeLightbox()" style="cursor:zoom-out;">
+    <img id="lightbox-img" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:var(--radius);box-shadow:var(--shadow-lg);object-fit:contain;animation:modal-in 0.25s ease-out;">
+  </div>
+
+  <!-- SELFIE / CHARACTER PHOTO MODAL -->
+
+  <div class="modal-overlay" id="selfie-modal">
+    <div class="selfie-modal">
+      <div class="selfie-header">
+        <h3 id="selfie-char-name">Become this character</h3>
+        <button class="btn-icon" onclick="closeSelfieModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="selfie-video-wrap" id="selfie-video-wrap">
+        <video id="selfie-video" autoplay playsinline muted></video>
+        <div class="selfie-count" id="selfie-count">0 / 5</div>
+        <button class="selfie-shutter" id="selfie-shutter" onclick="takePhoto()"><div class="selfie-shutter-inner"></div></button>
+      </div>
+      <div class="selfie-thumbs" id="selfie-thumbs"></div>
+      <div class="selfie-actions">
+        <button class="btn btn-ghost" onclick="closeSelfieModal()">Cancel</button>
+        <button class="btn btn-accent" id="selfie-save-btn" onclick="generateCharacterPhoto()" disabled><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE RESULTS MODAL -->
+
+  <div class="modal-overlay" id="generate-modal">
+    <div class="selfie-modal">
+      <div class="selfie-header">
+        <h3 id="generate-title">Choose your portrait</h3>
+        <button class="btn-icon" onclick="closeGenerateModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="generate-body">
+        <div class="generate-loading">
+          <div class="spinner"></div>
+          <p style="color:var(--ink-muted);">Creating your character portrait…</p>
+          <p style="color:var(--ink-muted);font-size:0.8rem;margin-top:8px;">This takes about 30 seconds</p>
+        </div>
+      </div>
+      <div class="selfie-actions" id="generate-actions" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeGenerateModal()">Cancel</button>
+        <button class="btn btn-accent" id="generate-use-btn" onclick="useSelectedPortrait()"><i class="fa-solid fa-check"></i> Use This</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+
+    /* ── STATE ── */
+    let currentStory = null, stories = [], recordings = {};
+    let isPlaying = false, currentLineIndex = 0, currentWordIndex = 0;
+    let allLines = [], wordSpans = [], drawerOpen = false;
+    let mediaRecorder = null, audioChunks = [];
+    let pendingRecBlock = null, activeRecBlock = null, currentPlaybackAudio = null;
+    let pendingProcessedUrl = null, pendingCompareBlock = null;
+    let customAvatars = {};
+
+    const characterColors = {
+      Narrator:'#6b5b4e', Margaret:'#9f1239', Josip:'#166534',
+      Hendricks:'#4338ca', Gerald:'#92400e',
+      Eleanor:'#7c3aed', Daniel:'#0e7490', Thomas:'#b45309',
+    };
+    function charColor(n) { return characterColors[n] || '#5c4d3e'; }
+
+    function getCharImage(speakerName) {
+      if (customAvatars && customAvatars[speakerName]) return customAvatars[speakerName];
+      if (!currentStory) return null;
+      const c = (currentStory.characters || []).find(ch => ch.name === speakerName);
+      if (c && c.image) return `stories/${c.image}`;
+      return null;
+    }
+
+    /* ── STORIES ── */
+    async function loadStories() {
+      stories = [];
+      // Try manifest first, then fall back to known files
+      try {
+        const manifest = await fetch('stories/stories-index.json');
+        if (manifest.ok) {
+          const files = await manifest.json();
+          for (const f of files) {
+            try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
+          }
+          renderProjectList();
+          return;
+        }
+      } catch(e) {}
+      // Fallback: try known files
+      const knownFiles = ['poured-in-place.json', 'signal-hill.json'];
+      for (const f of knownFiles) {
+        try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
+      }
+      renderProjectList();
+    }
+    function renderProjectList() {
+      const el = document.getElementById('project-list');
+      if (!stories.length) { el.innerHTML = '<p style="text-align:center;color:var(--ink-muted);">No stories found.</p>'; return; }
+      el.innerHTML = stories.map((s, i) => {
+        const ep = s.episodes ? s.episodes.length : 0, ch = s.characters ? s.characters.length : 0;
+        const coverImg = s.cover_image ? `<img class="project-cover" src="stories/${s.cover_image}" alt="${s.title}" onclick="event.stopPropagation();openLightbox(this.src)" style="cursor:zoom-in;" onerror="this.outerHTML='<div class=project-cover-placeholder><i class=\\'fa-solid fa-book-open\\'></i></div>'">` : `<div class="project-cover-placeholder"><i class="fa-solid fa-book-open"></i></div>`;
+        return `<div class="project-card" onclick="openStory(${i})">
+          ${coverImg}
+          <div class="project-info">
+            <h3>${s.title||'Untitled'}</h3>
+            ${s.subtitle ? `<div class="subtitle">${s.subtitle}</div>` : ''}
+            <div class="meta">${ep?ep+' episodes':'Single script'} · ${ch} characters${s.runningTime?' · '+s.runningTime:''}</div>
+          </div>
+        </div>`;
+      }).join('') + `<div class="project-card" onclick="openBuilder()" style="border-style:dashed;">
+        <div class="project-cover-placeholder" style="color:var(--accent);"><i class="fa-solid fa-plus" style="font-size:2rem;"></i></div>
+        <div class="project-info">
+          <h3>New Story</h3>
+          <div class="subtitle">Build a custom story with AI</div>
+          <div class="meta">Powered by Claude</div>
+        </div>
+      </div>`;
+    }
+
+    /* ── NAVIGATION ── */
+    function showOnly(id) {
+      ['home-screen','story-screen','char-bio-screen','builder-screen'].forEach(s => {
+        const el = document.getElementById(s);
+        if (s === 'story-screen') el.classList.toggle('active', s === id);
+        else if (s === 'builder-screen') el.classList.toggle('active', s === id);
+        else if (s === 'char-bio-screen') { el.classList.toggle('active', s === id); el.style.display = s === id ? '' : 'none'; }
+        else el.style.display = s === id ? '' : 'none';
+      });
+      const mt = document.getElementById('menu-toggle-btn'); if(mt) mt.style.display = id === 'story-screen' ? '' : 'none';
+      // home button always visible
+    }
+    function goHome() { stopPlayback(); stopActiveRecording(); showOnly('home-screen'); }
+    function openStory(index) {
+      currentStory = stories[index];
+      currentLineIndex = 0; currentWordIndex = 0; isPlaying = false;
+      showOnly('story-screen');
+      document.getElementById('story-title').textContent = currentStory.title || 'Story';
+      renderNovelScript();
+      renderCharacterList();
+      updateHint();
+    }
+    function backToStory() { showOnly('story-screen'); }
+
+    /* ── SCRIPT RENDERING ── */
+    function renderNovelScript() {
+      const container = document.getElementById('full-script');
+      allLines = currentStory.episodes
+        ? currentStory.episodes.flatMap(ep => ep.script || [])
+        : currentStory.script || [];
+      let html = '', i = 0;
+      while (i < allLines.length) {
+        const speaker = allLines[i].speaker;
+        let end = i;
+        while (end + 1 < allLines.length && allLines[end + 1].speaker === speaker) end++;
+        const col = charColor(speaker);
+        const hasRec = !!recordings[recKeyForBlock(i)];
+        const thumbImg = getCharImage(speaker);
+        const thumbHtml = thumbImg ? `<img class="speaker-thumb" src="${thumbImg}" alt="${speaker}" onerror="this.remove()">` : '';
+        html += `<div class="speaker-block ${hasRec?'has-recording':''}" style="border-color:${col}" data-block-start="${i}" data-block-end="${end}" data-speaker="${speaker}">`;
+        html += `<div class="speaker-label" style="color:${col}">${thumbHtml}${speaker}</div><div class="speaker-text">`;
+        for (let li = i; li <= end; li++) {
+          html += allLines[li].text.split(' ').map((w, wi) =>
+            `<span id="w-${li}-${wi}" class="word" data-line="${li}" data-word="${wi}">${w} </span>`
+          ).join('');
+        }
+        html += `</div><div class="dblclick-hint"><i class="fa-solid fa-microphone"></i> Double-click to record as ${speaker}</div></div>`;
+        i = end + 1;
+      }
+      container.innerHTML = html;
+      wordSpans = Array.from(container.querySelectorAll('.word'));
+
+      // Single click a word → seek and play from that word (both desktop and mobile)
+      container.querySelectorAll('.word').forEach(span => {
+        span.addEventListener('click', (e) => {
+          e.stopPropagation();
+          if (activeRecBlock) return;
+          stopPlayback();
+          currentLineIndex = parseInt(span.dataset.line);
+          currentWordIndex = parseInt(span.dataset.word);
+          startPlayback();
+        });
+      });
+      container.querySelectorAll('.speaker-block').forEach(block => {
+        // Desktop: double-click to record
+        block.addEventListener('dblclick', (e) => {
+          e.preventDefault();
+          if (activeRecBlock) return;
+          promptRecord(parseInt(block.dataset.blockStart), parseInt(block.dataset.blockEnd), block.dataset.speaker);
+        });
+        // Mobile: long-press (500ms) to record — cancelled if finger moves (scroll)
+        let longPressTimer = null;
+        let longPressTriggered = false;
+        block.addEventListener('touchstart', (e) => {
+          if (activeRecBlock) return;
+          longPressTriggered = false;
+          longPressTimer = setTimeout(() => {
+            longPressTriggered = true;
+            longPressTimer = null;
+            // Clear any text selection caused by the long press
+            if (window.getSelection) window.getSelection().removeAllRanges();
+            promptRecord(parseInt(block.dataset.blockStart), parseInt(block.dataset.blockEnd), block.dataset.speaker);
+          }, 500);
+        }, { passive: true });
+        block.addEventListener('touchend', (e) => {
+          if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; }
+          // If long press fired, suppress the click that follows
+          if (longPressTriggered) { e.preventDefault(); longPressTriggered = false; }
+        });
+        block.addEventListener('touchmove', () => { if (longPressTimer) { clearTimeout(longPressTimer); longPressTimer = null; } });
+      });
+      // Click off text → pause if playing, resume if paused
+      container.addEventListener('click', (e) => {
+        if (e.target.classList.contains('word')) return;
+        if (activeRecBlock) return;
+        if (isPlaying) stopPlayback();
+        else if (currentLineIndex > 0 || currentWordIndex > 0) startPlayback();
+      });
+    }
+
+    function isTouchPrimary() { return ('ontouchstart' in window) || navigator.maxTouchPoints > 0; }
+
+    function updateHint() {
+      const el = document.getElementById('playback-hint');
+      const touch = isTouchPrimary();
+      if (isPlaying) {
+        el.textContent = 'Tap anywhere to pause';
+        el.classList.add('is-playing');
+      } else if (currentLineIndex > 0 || currentWordIndex > 0) {
+        el.textContent = 'Paused — tap a word to resume';
+        el.classList.remove('is-playing');
+      } else {
+        el.textContent = touch ? 'Tap a word to begin · Hold block to record' : 'Click a word to begin · Double-click block to record';
+        el.classList.remove('is-playing');
+      }
+    }
+
+
+
+    /* ── CHARACTER LIST ── */
+    function getRecordingFraction(speakerName) {
+      let total = 0, recorded = 0, i = 0;
+      while (i < allLines.length) {
+        const speaker = allLines[i].speaker; let end = i;
+        while (end + 1 < allLines.length && allLines[end + 1].speaker === speaker) end++;
+        if (speaker === speakerName) { total++; if (recordings[recKeyForBlock(i)]) recorded++; }
+        i = end + 1;
+      }
+      return { recorded, total };
+    }
+    function renderCharacterList() {
+      const chars = currentStory.characters || [];
+      const markup = chars.map(c => {
+        const col = charColor(c.name);
+        const frac = getRecordingFraction(c.name);
+        const fracClass = frac.recorded === 0 ? 'none' : (frac.recorded >= frac.total ? 'complete' : 'partial');
+        const imgSrc = c.image ? `stories/${c.image}` : null;
+        const avatarInner = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" onerror="this.parentNode.innerHTML='${c.name[0]}'">` : c.name[0];
+        return `<div class="char-item" onclick="openCharacterBio('${c.name.replace(/'/g,"\\'")}')">
+          <div class="char-avatar" style="background:${col}18;color:${col};cursor:pointer;" onclick="event.stopPropagation();openSelfieModal(c.name)" title="Become this character">${avatarInner}</div>
+          <div class="char-info"><div class="char-name">${c.name}</div>${c.summary ? `<div class="char-summary-short">${c.summary}</div>` : ''}</div>
+          ${frac.total > 0 ? `<span class="char-rec-fraction ${fracClass}">${frac.recorded}/${frac.total}</span>` : ''}
+        </div>`;
+      }).join('');
+      document.getElementById('sidebar-chars').innerHTML = markup;
+      document.getElementById('drawer-chars').innerHTML = markup;
+    }
+
+    /* ── CHARACTER BIO ── */
+    function openCharacterBio(name) {
+      if (drawerOpen) toggleDrawer();
+      stopPlayback();
+      showOnly('char-bio-screen');
+      const char = (currentStory.characters || []).find(c => c.name === name) || { name };
+      const col = charColor(name);
+      const displayName = char.full_name || name;
+      const lineCount = allLines.filter(l => l.speaker === name).length;
+      const avatarSrc = getCharAvatar(name);
+      let html = `<div class="bio-hero"><div class="bio-hero-top">
+        <div class="bio-avatar" style="background:${col}18;color:${col};cursor:pointer;position:relative;" onclick="openSelfieModal('${name}')" title="Tap to become this character">${avatarSrc ? `<img src="${avatarSrc}" alt="${displayName}" onerror="this.parentNode.innerHTML='${displayName[0]}'">` : displayName[0]}<div style="position:absolute;bottom:4px;right:4px;background:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-camera" style="color:white;font-size:0.6rem;"></i></div></div>
+        <div><h2>${displayName}</h2>${char.summary ? `<p class="bio-tagline">${char.summary}</p>` : ''}</div>
+      </div><p style="font-size:0.85rem;color:var(--ink-muted);">${lineCount} line${lineCount!==1?'s':''} in the script</p></div>`;
+      const sections = [
+        {key:'background',icon:'fa-clock-rotate-left',title:'Background'},
+        {key:'traits',icon:'fa-masks-theater',title:'Character Traits',isList:true},
+        {key:'motivations',icon:'fa-bullseye',title:'Motivations'},
+        {key:'role',icon:'fa-book',title:'Role in the Story'},
+        {key:['voice_notes','voice'],icon:'fa-microphone-lines',title:'Voice & Performance Notes'},
+      ];
+      let has = false;
+      for (const sec of sections) {
+        const keys = Array.isArray(sec.key)?sec.key:[sec.key];
+        const val = keys.map(k=>char[k]).find(v=>v);
+        if (!val) continue; has = true;
+        html += `<div class="bio-section"><h4><i class="fa-solid ${sec.icon}"></i> ${sec.title}</h4>`;
+        if (sec.isList && Array.isArray(val)) html += `<ul>${val.map(t=>`<li>${t}</li>`).join('')}</ul>`;
+        else html += `<p>${Array.isArray(val)?val.join('. '):val}</p>`;
+        html += `</div>`;
+      }
+      if (!has) html += `<div class="bio-section"><h4><i class="fa-solid fa-circle-info"></i> About ${displayName}</h4><p>${char.summary||'No additional details available.'}</p></div>`;
+      document.getElementById('bio-content').innerHTML = html;
+    }
+
+    /* ── MOBILE DRAWER ── */
+    function toggleDrawer() {
+      drawerOpen = !drawerOpen;
+      document.getElementById('drawer').classList.toggle('open', drawerOpen);
+      document.getElementById('drawer-overlay').classList.toggle('open', drawerOpen);
+    }
+
+    /* ── RECORDING ── */
+    function promptRecord(start, end, speaker) {
+      stopPlayback();
+      pendingRecBlock = { start, end, speaker };
+      const col = charColor(speaker);
+      document.getElementById('modal-icon').style.background = col + '18';
+      document.getElementById('modal-icon').style.color = col;
+      document.getElementById('modal-title').textContent = `Ready to narrate for ${speaker}?`;
+      document.getElementById('modal-body').textContent = 'Recording will start immediately. Double-click anywhere when you\'re done.';
+      // Show voice guidance if available
+      const vgSection = document.getElementById('voice-guidance-section');
+      const vgText = document.getElementById('voice-guidance');
+      const char = currentStory && (currentStory.characters || []).find(c => c.name === speaker);
+      const fullGuidance = char && (char.voice_notes || char.voice);
+      if (fullGuidance) {
+        const words = fullGuidance.split(/\s+/);
+        const guidance = words.length > 45 ? words.slice(0, 45).join(' ') + '…' : fullGuidance;
+        vgText.textContent = guidance; vgSection.style.display = '';
+      } else { vgSection.style.display = 'none'; }
+      document.getElementById('rec-modal').classList.add('open');
+    }
+    function cancelRecordModal() { pendingRecBlock = null; document.getElementById('rec-modal').classList.remove('open'); }
+
+    async function confirmRecordModal() {
+      document.getElementById('rec-modal').classList.remove('open');
+      const block = pendingRecBlock; pendingRecBlock = null;
+      if (!block) return;
+
+      let sttResult = '';
+      let recognition = null;
+      try {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (SR) {
+          recognition = new SR();
+          recognition.continuous = true; recognition.interimResults = false; recognition.lang = 'en-US';
+          recognition.onresult = (e) => {
+            const parts = [];
+            for (let i = 0; i < e.results.length; i++) if (e.results[i].isFinal) parts.push(e.results[i][0].transcript);
+            sttResult = parts.join(' ').trim();
+          };
+          recognition.onerror = () => {};
+          recognition.start();
+        }
+      } catch(e) {}
+
+      try {
+        const stream = await navigator.mediaDevices.getUserMedia({
+          audio: { echoCancellation: true, noiseSuppression: true, sampleRate: 44100 }
+        });
+        // Safari/iOS needs audio/mp4; Chrome/Firefox prefer audio/webm
+        const mimeType = ['audio/webm;codecs=opus','audio/webm','audio/mp4','audio/ogg']
+          .find(t => MediaRecorder.isTypeSupported(t)) || '';
+        mediaRecorder = new MediaRecorder(stream, mimeType ? { mimeType } : {});
+        audioChunks = []; activeRecBlock = block;
+        const el = document.querySelector(`.speaker-block[data-block-start="${block.start}"]`);
+        if (el) { el.classList.add('recording-active'); el.scrollIntoView({ behavior:'smooth', block:'center' }); }
+        document.getElementById('rec-banner').classList.add('visible');
+        const isTouchDevice = ('ontouchstart' in window) || navigator.maxTouchPoints > 0;
+        document.getElementById('rec-banner-text').textContent = isTouchDevice
+          ? 'Recording — tap here to stop'
+          : 'Recording — double-click to stop';
+        document.addEventListener('dblclick', stopRecordingHandler, true);
+        document.addEventListener('touchend', stopRecordingHandler, true);
+        mediaRecorder.ondataavailable = e => audioChunks.push(e.data);
+        mediaRecorder.onstop = async () => {
+          stream.getTracks().forEach(t => t.stop());
+          if (recognition) try { recognition.stop(); } catch(e) {}
+          document.getElementById('rec-banner').classList.remove('visible');
+          document.removeEventListener('dblclick', stopRecordingHandler, true);
+          document.removeEventListener('touchend', stopRecordingHandler, true);
+          const blockEl = document.querySelector(`.speaker-block[data-block-start="${activeRecBlock?.start}"]`);
+          if (blockEl) blockEl.classList.remove('recording-active');
+          if (!audioChunks.length || !activeRecBlock) { activeRecBlock = null; mediaRecorder = null; return; }
+
+          document.getElementById('processing-modal').classList.add('open');
+          updateProgress('Preparing…', 5);
+          const processingStart = Date.now();
+          const rawBlob = new Blob(audioChunks, { type:'audio/webm' });
+          const savedBlock = { ...activeRecBlock };
+          activeRecBlock = null; mediaRecorder = null;
+
+          try {
+            const processedBlob = await processAudio(rawBlob);
+            const processedUrl = URL.createObjectURL(processedBlob);
+            await new Promise(r => setTimeout(r, 500));
+            const elapsed = Date.now() - processingStart;
+            if (elapsed < 1500) { updateProgress('Done!', 100); await new Promise(r => setTimeout(r, 1500 - elapsed)); }
+            document.getElementById('processing-modal').classList.remove('open');
+            pendingProcessedUrl = processedUrl;
+            pendingCompareBlock = savedBlock;
+            showComparisonModal(getBlockText(savedBlock.start, savedBlock.end), sttResult);
+          } catch(err) {
+            document.getElementById('processing-modal').classList.remove('open');
+            const rawUrl = URL.createObjectURL(rawBlob);
+            pendingProcessedUrl = rawUrl;
+            pendingCompareBlock = savedBlock;
+            showComparisonModal(getBlockText(savedBlock.start, savedBlock.end), sttResult);
+          }
+        };
+        mediaRecorder.start();
+      } catch (err) { alert('Microphone access denied. On mobile, make sure you\'re using HTTPS.'); activeRecBlock = null; }
+    }
+
+    function getBlockText(start, end) {
+      const texts = []; for (let i = start; i <= end; i++) texts.push(allLines[i].text); return texts.join(' ');
+    }
+
+    /* ── AUDIO PROCESSING (local only — silence trim + normalize) ── */
+    function updateProgress(status, pct) {
+      document.getElementById('processing-status').textContent = status;
+      document.getElementById('processing-bar').style.width = pct + '%';
+      document.getElementById('processing-pct').textContent = pct > 0 ? pct + '%' : '';
+    }
+    function tick() { return new Promise(r => setTimeout(r, 20)); }
+
+    async function processAudio(blob) {
+      updateProgress('Decoding…', 10);
+      const ctx = new (window.AudioContext || window.webkitAudioContext)();
+      if (ctx.state === 'suspended') await ctx.resume();
+      const buf = await ctx.decodeAudioData(await blob.arrayBuffer());
+      const raw = buf.getChannelData(0), sr = buf.sampleRate;
+
+      updateProgress('Trimming silence…', 30);
+      await tick();
+
+      // RMS analysis
+      const win = Math.floor(sr * 0.02), rms = [];
+      for (let i = 0; i < raw.length; i += win) {
+        let s = 0; const e = Math.min(i + win, raw.length);
+        for (let j = i; j < e; j++) s += raw[j] * raw[j];
+        rms.push(Math.sqrt(s / (e - i)));
+      }
+      const sorted = [...rms].sort((a,b) => a-b);
+      const nf = sorted.slice(0, Math.max(1, Math.floor(sorted.length * 0.1))).reduce((a,b) => a+b, 0) / Math.max(1, Math.floor(sorted.length * 0.1));
+      const thresh = Math.max(nf * 3, 0.005);
+
+      // Trim to 500ms margin
+      const margin = Math.floor(sr * 0.5);
+      let first = 0, last = rms.length - 1;
+      for (let i = 0; i < rms.length; i++) { if (rms[i] > thresh) { first = i; break; } }
+      for (let i = rms.length - 1; i >= 0; i--) { if (rms[i] > thresh) { last = i; break; } }
+      const trimmed = raw.slice(Math.max(0, first * win - margin), Math.min(raw.length, (last + 1) * win + margin));
+
+      updateProgress('Normalizing…', 70);
+      await tick();
+
+      // Normalize peak to -1dB
+      let peak = 0;
+      for (let i = 0; i < trimmed.length; i++) peak = Math.max(peak, Math.abs(trimmed[i]));
+      const gain = peak > 0 ? 0.89 / peak : 1;
+      const out = new Float32Array(trimmed.length);
+      for (let i = 0; i < trimmed.length; i++) out[i] = trimmed[i] * gain;
+
+      updateProgress('Done', 100);
+      ctx.close();
+
+      // Encode WAV
+      const buffer = new ArrayBuffer(44 + out.length * 2), v = new DataView(buffer);
+      const ws = (o, s) => { for (let i = 0; i < s.length; i++) v.setUint8(o + i, s.charCodeAt(i)); };
+      ws(0,'RIFF'); v.setUint32(4, 36 + out.length * 2, true); ws(8,'WAVE'); ws(12,'fmt ');
+      v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+      v.setUint32(24, sr, true); v.setUint32(28, sr * 2, true); v.setUint16(32, 2, true); v.setUint16(34, 16, true);
+      ws(36,'data'); v.setUint32(40, out.length * 2, true);
+      for (let i = 0; i < out.length; i++) { const s = Math.max(-1, Math.min(1, out[i])); v.setInt16(44 + i * 2, s < 0 ? s * 0x8000 : s * 0x7FFF, true); }
+      return new Blob([buffer], { type: 'audio/wav' });
+    }
+
+    /* ── COMPARISON MODAL ── */
+    function showComparisonModal(expected, spoken) {
+      const { expectedHtml, spokenHtml, matchPct } = diffTexts(expected, spoken);
+      document.getElementById('compare-expected').innerHTML = expectedHtml;
+      document.getElementById('compare-spoken').innerHTML = spokenHtml || '<em style="color:var(--ink-muted);">Speech recognition unavailable</em>';
+      const verdict = document.getElementById('compare-verdict');
+      if (!spoken) verdict.innerHTML = '<span class="diff-warn">Listen to verify your recording</span>';
+      else if (matchPct >= 90) verdict.innerHTML = `<span class="diff-ok"><i class="fa-solid fa-check"></i> Great match — ${matchPct}%</span>`;
+      else if (matchPct >= 60) verdict.innerHTML = `<span class="diff-warn"><i class="fa-solid fa-triangle-exclamation"></i> Partial match — ${matchPct}%</span>`;
+      else verdict.innerHTML = `<span class="diff-bad"><i class="fa-solid fa-xmark"></i> Low match — ${matchPct}%</span>`;
+      document.getElementById('compare-modal').classList.add('open');
+    }
+    function diffTexts(expected, spoken) {
+      const norm = s => s.toLowerCase().replace(/[^\w\s]/g, '').split(/\s+/).filter(Boolean);
+      const ew = norm(expected), sw = norm(spoken || '');
+      const m = ew.length, n = sw.length;
+      const dp = Array.from({length:m+1}, () => new Array(n+1).fill(0));
+      for (let i = 1; i <= m; i++) for (let j = 1; j <= n; j++)
+        dp[i][j] = ew[i-1]===sw[j-1] ? dp[i-1][j-1]+1 : Math.max(dp[i-1][j], dp[i][j-1]);
+      const em = new Set(), sm = new Set();
+      let i = m, j = n;
+      while (i > 0 && j > 0) { if (ew[i-1]===sw[j-1]) { em.add(i-1); sm.add(j-1); i--; j--; } else if (dp[i-1][j]>dp[i][j-1]) i--; else j--; }
+      const pct = m > 0 ? Math.round((em.size/m)*100) : (n===0?100:0);
+      const oe = expected.split(/\s+/), os = (spoken||'').split(/\s+/).filter(Boolean);
+      return {
+        expectedHtml: oe.map((w,i) => `<span class="${em.has(i)?'diff-match':'diff-miss'}">${w}</span>`).join(' '),
+        spokenHtml: os.map((w,i) => `<span class="${sm.has(i)?'diff-match':'diff-extra'}">${w}</span>`).join(' '),
+        matchPct: pct
+      };
+    }
+    function playCompareAudio() { if (pendingProcessedUrl) new Audio(pendingProcessedUrl).play(); }
+    function acceptRecording() {
+      if (pendingProcessedUrl && pendingCompareBlock) {
+        recordings[recKeyForBlock(pendingCompareBlock.start)] = pendingProcessedUrl;
+        const el = document.querySelector(`.speaker-block[data-block-start="${pendingCompareBlock.start}"]`);
+        if (el) el.classList.add('has-recording');
+        renderCharacterList();
+      }
+      pendingProcessedUrl = null; pendingCompareBlock = null;
+      document.getElementById('compare-modal').classList.remove('open');
+    }
+    function retakeRecording() {
+      const block = pendingCompareBlock;
+      if (pendingProcessedUrl) URL.revokeObjectURL(pendingProcessedUrl);
+      pendingProcessedUrl = null; pendingCompareBlock = null;
+      document.getElementById('compare-modal').classList.remove('open');
+      if (block) promptRecord(block.start, block.end, block.speaker);
+    }
+    function discardRecording() {
+      if (pendingProcessedUrl) URL.revokeObjectURL(pendingProcessedUrl);
+      pendingProcessedUrl = null; pendingCompareBlock = null;
+      document.getElementById('compare-modal').classList.remove('open');
+    }
+    function stopRecordingHandler(e) {
+      // Allow single-click on the banner itself OR dblclick anywhere
+      const onBanner = e.target.closest('#rec-banner');
+      if (!onBanner && e.type !== 'dblclick') return;
+      e.preventDefault(); e.stopPropagation(); e.stopImmediatePropagation();
+      if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop();
+    }
+    function stopActiveRecording() { if (mediaRecorder && mediaRecorder.state === 'recording') mediaRecorder.stop(); document.getElementById('rec-banner').classList.remove('visible'); document.removeEventListener('dblclick', stopRecordingHandler, true); document.removeEventListener('touchend', stopRecordingHandler, true); document.querySelectorAll('.recording-active').forEach(b => b.classList.remove('recording-active')); }
+
+    /* ── REC KEYS ── */
+    function recKeyForBlock(i) { return `block-${i}`; }
+    function blockStartForLine(li) { const s = allLines[li].speaker; let i = li; while (i > 0 && allLines[i-1].speaker === s) i--; return i; }
+    function blockEndForLine(li) { const s = allLines[li].speaker; let i = li; while (i+1 < allLines.length && allLines[i+1].speaker === s) i++; return i; }
+
+    /* ── PLAYBACK ── */
+    function startPlayback() { if (!allLines.length) return; isPlaying = true; updateHint(); speakLine(currentLineIndex, currentWordIndex); }
+    function stopPlayback() { isPlaying = false; speechSynthesis.cancel(); if (currentPlaybackAudio) { currentPlaybackAudio.pause(); currentPlaybackAudio = null; } clearHighlight(); updateHint(); }
+    function clearHighlight() { wordSpans.forEach(w => w.classList.remove('active')); }
+
+    function speakLine(lineIndex, startWord) {
+      if (!isPlaying || lineIndex >= allLines.length) { isPlaying = false; currentLineIndex = 0; currentWordIndex = 0; clearHighlight(); updateHint(); return; }
+      currentLineIndex = lineIndex; currentWordIndex = startWord || 0;
+      const bStart = blockStartForLine(lineIndex), bEnd = blockEndForLine(lineIndex), rKey = recKeyForBlock(bStart);
+      if (lineIndex > bStart && recordings[rKey]) { currentLineIndex = bEnd+1; currentWordIndex = 0; if (isPlaying) speakLine(currentLineIndex, 0); return; }
+      const wordsInLine = wordSpans.filter(w => parseInt(w.dataset.line) === lineIndex);
+      if (wordsInLine.length) wordsInLine[0].scrollIntoView({ behavior:'smooth', block:'center' });
+      if (lineIndex === bStart && recordings[rKey]) {
+        clearHighlight();
+        wordSpans.filter(w => { const li = parseInt(w.dataset.line); return li >= bStart && li <= bEnd; }).forEach(w => w.classList.add('active'));
+        currentPlaybackAudio = new Audio(recordings[rKey]);
+        currentPlaybackAudio.onended = () => { currentPlaybackAudio = null; clearHighlight(); if (!isPlaying) return; currentLineIndex = bEnd+1; currentWordIndex = 0; speakLine(currentLineIndex, 0); };
+        currentPlaybackAudio.play();
+        return;
+      }
+      const lineWords = allLines[lineIndex].text.split(' ');
+      const textToSpeak = lineWords.slice(startWord).join(' ');
+      const wordsToHighlight = wordsInLine.slice(startWord);
+      if (!textToSpeak.trim()) { currentLineIndex = lineIndex+1; currentWordIndex = 0; if (isPlaying) speakLine(currentLineIndex, 0); return; }
+      clearHighlight();
+      const utt = new SpeechSynthesisUtterance(textToSpeak);
+      let wIdx = 0;
+      let boundaryFired = false;
+      let fallbackTimer = null;
+
+      function highlightWord(idx) {
+        if (idx >= wordsToHighlight.length) return;
+        clearHighlight();
+        wordsToHighlight[idx].classList.add('active');
+        currentWordIndex = startWord + idx + 1;
+      }
+
+      // Estimate ms per word from text length (rough: ~120 wpm default rate)
+      const msPerWord = Math.max(200, (textToSpeak.length / 5) / 120 * 60000 / Math.max(1, wordsToHighlight.length));
+
+      utt.onboundary = (e) => {
+        if (e.name !== 'word') return;
+        boundaryFired = true;
+        if (fallbackTimer) { clearInterval(fallbackTimer); fallbackTimer = null; }
+        if (wIdx < wordsToHighlight.length) { highlightWord(wIdx); wIdx++; }
+      };
+      utt.onstart = () => {
+        // Start fallback timer; cancel if onboundary fires (means browser supports it)
+        fallbackTimer = setInterval(() => {
+          if (wIdx < wordsToHighlight.length) { highlightWord(wIdx); wIdx++; }
+          else { clearInterval(fallbackTimer); fallbackTimer = null; }
+        }, msPerWord);
+      };
+      utt.onend = () => {
+        if (fallbackTimer) { clearInterval(fallbackTimer); fallbackTimer = null; }
+        if (!isPlaying) return;
+        currentLineIndex = lineIndex+1; currentWordIndex = 0; speakLine(currentLineIndex, 0);
+      };
+      utt.onerror = () => {
+        if (fallbackTimer) { clearInterval(fallbackTimer); fallbackTimer = null; }
+        if (!isPlaying) return;
+        currentLineIndex = lineIndex+1; currentWordIndex = 0; speakLine(currentLineIndex, 0);
+      };
+      speechSynthesis.speak(utt);
+    }
+
+    /* ── LIGHTBOX ── */
+    function openLightbox(src) { document.getElementById('lightbox-img').src = src; document.getElementById('lightbox').classList.add('open'); }
+    function closeLightbox() { document.getElementById('lightbox').classList.remove('open'); }
+
+    /* ══════════════════════════════════════════════════
+       STORY BUILDER
+       ══════════════════════════════════════════════════ */
+    let builderStory = null;
+    let anthropicApiKey = sessionStorage.getItem('anthropic_key') || '';
+    let chatHistory = [];
+    let currentElementsTab = 'characters';
+
+    function initNewBuilderStory() {
+      builderStory = {
+        title: 'Untitled Story',
+        premise: 'A new story is taking shape…',
+        script: [],
+        characters: [],
+        locations: [],
+        things: [],
+        targetWords: 800
+      };
+    }
+
+    function openBuilder() {
+      if (!builderStory) initNewBuilderStory();
+      showOnly('builder-screen');
+      document.getElementById('target-words').value = builderStory.targetWords || 800;
+      renderBuilderPreview();
+      if (!chatHistory.length) {
+        chatHistory.push({ role:'ai', content:'Welcome to Story Builder! Describe the kind of story you want to create — the setting, characters, mood, and what happens. I\'ll turn it into a performable script.' });
+      }
+      renderChatLog();
+    }
+
+    function renderBuilderPreview() {
+      document.getElementById('premise-text').textContent = builderStory.premise || 'Your story will appear here…';
+      const container = document.getElementById('builder-script');
+      if (!builderStory.script.length) {
+        container.innerHTML = '<p style="text-align:center;color:var(--ink-muted);padding:60px 20px;">Start chatting to build your story.</p>';
+        return;
+      }
+      let html = '', i = 0;
+      const lines = builderStory.script;
+      while (i < lines.length) {
+        const speaker = lines[i].speaker || 'Narrator';
+        let end = i;
+        while (end + 1 < lines.length && (lines[end+1].speaker || 'Narrator') === speaker) end++;
+        const col = charColor(speaker);
+        html += `<div class="speaker-block" style="border-color:${col}" onclick="previewSpeak(${i},${end})">`;
+        html += `<div class="speaker-label" style="color:${col}">${speaker}</div><div class="speaker-text">`;
+        for (let li = i; li <= end; li++) html += lines[li].text + ' ';
+        html += '</div></div>';
+        i = end + 1;
+      }
+      container.innerHTML = html;
+    }
+
+    function previewSpeak(start, end) {
+      speechSynthesis.cancel();
+      const lines = builderStory.script;
+      let text = '';
+      for (let i = start; i <= end; i++) text += lines[i].text + ' ';
+      speechSynthesis.speak(new SpeechSynthesisUtterance(text.trim()));
+    }
+
+    /* ── CHAT ── */
+    function renderChatLog() {
+      const log = document.getElementById('chat-log');
+      log.innerHTML = chatHistory.map(m => {
+        const cls = m.role === 'user' ? 'chat-user' : (m.role === 'system' ? 'chat-system' : 'chat-ai');
+        return `<div class="chat-message ${cls}">${m.content}</div>`;
+      }).join('');
+      log.scrollTop = log.scrollHeight;
+    }
+
+    async function sendChatMessage() {
+      const input = document.getElementById('chat-input');
+      const text = input.value.trim();
+      if (!text) return;
+      chatHistory.push({ role:'user', content:text });
+      input.value = '';
+      renderChatLog();
+
+      if (!anthropicApiKey) {
+        chatHistory.push({ role:'system', content:'Please set your API key first (click the key icon above).' });
+        renderChatLog();
+        showApiKeyModal();
+        return;
+      }
+
+      if (!builderStory) initNewBuilderStory();
+      builderStory.targetWords = parseInt(document.getElementById('target-words').value) || 800;
+
+      chatHistory.push({ role:'system', content:'Thinking…' });
+      renderChatLog();
+
+      const systemPrompt = `You are a story builder. Create short audio fiction scripts with speaker/text lines.
+Target length: ${builderStory.targetWords} words. Each script line is {speaker, text}.
+Current story state: ${JSON.stringify(builderStory)}
+Respond with a brief message (1-2 sentences) then a JSON block with the updated story.
+The JSON must have: title, premise, script (array of {speaker,text}), characters (array of {name,summary,voice_notes}).
+Keep it entertaining and suitable for voice performance.`;
+
+      try {
+        const res = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: { 'Content-Type':'application/json', 'x-api-key':anthropicApiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+          body: JSON.stringify({
+            model: 'claude-sonnet-4-20250514',
+            max_tokens: 4096,
+            system: systemPrompt,
+            messages: [{ role:'user', content:text }]
+          })
+        });
+        if (!res.ok) { const err = await res.json().catch(()=>({})); throw new Error(err.error?.message || `API error ${res.status}`); }
+        const data = await res.json();
+        const reply = data.content[0].text;
+
+        // Remove the "Thinking…" message
+        chatHistory = chatHistory.filter(m => m.content !== 'Thinking…');
+
+        // Try to extract JSON from the response
+        const jsonMatch = reply.match(/```json\s*([\s\S]*?)```/) || reply.match(/(\{[\s\S]*\})/);
+        if (jsonMatch) {
+          try {
+            const parsed = JSON.parse(jsonMatch[1] || jsonMatch[0]);
+            builderStory = { ...builderStory, ...parsed };
+            renderBuilderPreview();
+            // Show the text part (before the JSON)
+            const textPart = reply.split(/```json|(\{[\s\S]*\})/)[0].trim();
+            chatHistory.push({ role:'ai', content: textPart || 'Story updated!' });
+          } catch(e) {
+            chatHistory.push({ role:'ai', content: reply.substring(0, 500) });
+          }
+        } else {
+          chatHistory.push({ role:'ai', content: reply });
+        }
+        renderChatLog();
+      } catch(e) {
+        chatHistory = chatHistory.filter(m => m.content !== 'Thinking…');
+        chatHistory.push({ role:'system', content: `Error: ${e.message}` });
+        renderChatLog();
+      }
+    }
+
+    function startVoiceInput() {
+      const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      if (!SR) { alert('Speech recognition not supported in this browser.'); return; }
+      const rec = new SR();
+      rec.lang = 'en-US'; rec.continuous = false; rec.interimResults = false;
+      rec.onresult = e => { document.getElementById('chat-input').value = e.results[0][0].transcript; };
+      rec.onerror = () => {};
+      rec.start();
+    }
+
+    /* ── API KEY ── */
+    function showApiKeyModal() {
+      document.getElementById('apikey-input').value = anthropicApiKey;
+      document.getElementById('apikey-modal').classList.add('open');
+    }
+    function closeApiKeyModal() { document.getElementById('apikey-modal').classList.remove('open'); }
+    function saveApiKey() {
+      const val = document.getElementById('apikey-input').value.trim();
+      if (!val) { alert('Please enter a key.'); return; }
+      anthropicApiKey = val;
+      sessionStorage.setItem('anthropic_key', val);
+      closeApiKeyModal();
+      chatHistory.push({ role:'system', content:'API key saved.' });
+      renderChatLog();
+    }
+
+    /* ── ELEMENTS MODAL ── */
+    function showElementsModal(tab) {
+      currentElementsTab = tab || 'characters';
+      document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + currentElementsTab).classList.add('active');
+      renderElementsList();
+      document.getElementById('elements-modal').classList.add('open');
+    }
+    function closeElementsModal() { document.getElementById('elements-modal').classList.remove('open'); }
+    function switchElementsTab(tab) {
+      currentElementsTab = tab;
+      document.querySelectorAll('.modal-tab').forEach(t => t.classList.remove('active'));
+      document.getElementById('tab-' + tab).classList.add('active');
+      renderElementsList();
+    }
+    function renderElementsList() {
+      const list = document.getElementById('elements-list');
+      const items = builderStory ? (builderStory[currentElementsTab] || []) : [];
+      if (!items.length) {
+        list.innerHTML = `<p style="text-align:center;color:var(--ink-muted);padding:40px;">No ${currentElementsTab} yet. They'll appear as you build your story.</p>`;
+        return;
+      }
+      list.innerHTML = items.map(item => `<div class="element-card">
+        <div class="element-name">${item.name || item.title || 'Unnamed'}</div>
+        <div class="element-desc">${item.summary || item.description || item.voice_notes || ''}</div>
+      </div>`).join('');
+    }
+
+    /* ── SAVE BUILDER STORY ── */
+    function saveBuilderStory() {
+      if (!builderStory || !builderStory.script.length) {
+        alert('Build some story content first by chatting with the AI.');
+        return;
+      }
+      const storyToSave = {
+        title: builderStory.title || 'Custom Story',
+        subtitle: 'Created with VoiceForge Story Builder',
+        description: builderStory.premise,
+        episodes: [{ episodeNumber:1, title: builderStory.title, script: builderStory.script }],
+        characters: (builderStory.characters || []).map(c => ({
+          name: c.name, summary: c.summary || '', voice_notes: c.voice_notes || ''
+        }))
+      };
+      const blob = new Blob([JSON.stringify(storyToSave, null, 2)], { type:'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url; a.download = (builderStory.title || 'story').toLowerCase().replace(/\s+/g,'-') + '.json';
+      a.click();
+      URL.revokeObjectURL(url);
+      chatHistory.push({ role:'system', content:'Story saved as JSON! Place it in the stories/ folder and reload to use it.' });
+      renderChatLog();
+    }
+
+    /* ── SELFIE / CHARACTER PHOTO ── */
+    const PROXY_TOKEN = 'Lindsey123!';
+    const PROXY_BASE = '';
+    let selfieStream = null;
+    let selfiePhotos = []; // array of base64 data URLs
+    let selfieCharName = null;
+    let selfieRetakeIndex = null;
+    let generateSelectedUrl = null;
+
+    function openSelfieModal(charName) {
+      selfieCharName = charName;
+      selfiePhotos = [];
+      selfieRetakeIndex = null;
+      document.getElementById('selfie-char-name').textContent = 'Become ' + charName;
+      document.getElementById('selfie-count').textContent = '0 / 5';
+      document.getElementById('selfie-save-btn').disabled = true;
+      renderSelfieThumbsUI();
+      document.getElementById('selfie-modal').classList.add('open');
+      startSelfieCamera();
+    }
+
+    function closeSelfieModal() {
+      stopSelfieCamera();
+      document.getElementById('selfie-modal').classList.remove('open');
+    }
+
+    async function startSelfieCamera() {
+      try {
+        selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 640 }, audio: false });
+        document.getElementById('selfie-video').srcObject = selfieStream;
+      } catch(e) {
+        alert('Camera access needed to take photos.');
+        closeSelfieModal();
+      }
+    }
+
+    function stopSelfieCamera() {
+      if (selfieStream) { selfieStream.getTracks().forEach(t => t.stop()); selfieStream = null; }
+      const v = document.getElementById('selfie-video');
+      v.srcObject = null;
+    }
+
+    function takePhoto() {
+      const video = document.getElementById('selfie-video');
+      if (!video.srcObject) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 640; canvas.height = 640;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, -640, 0, 640, 640);
+      ctx.restore();
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      if (selfieRetakeIndex !== null) {
+        selfiePhotos[selfieRetakeIndex] = dataUrl;
+        selfieRetakeIndex = null;
+      } else if (selfiePhotos.length < 5) {
+        selfiePhotos.push(dataUrl);
+      }
+      document.getElementById('selfie-count').textContent = selfiePhotos.length + ' / 5';
+      document.getElementById('selfie-save-btn').disabled = selfiePhotos.length === 0;
+      renderSelfieThumbsUI();
+    }
+
+    function renderSelfieThumbsUI() {
+      const container = document.getElementById('selfie-thumbs');
+      let html = '';
+      for (let i = 0; i < 5; i++) {
+        if (selfiePhotos[i]) {
+          html += '<img class="selfie-thumb" src="' + selfiePhotos[i] + '" onclick="retakePhoto(' + i + ')" title="Tap to retake">';
+        } else {
+          html += '<div class="selfie-thumb-empty"><i class="fa-solid fa-camera"></i></div>';
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    function retakePhoto(index) {
+      selfieRetakeIndex = index;
+    }
+
+    async function generateCharacterPhoto() {
+      if (selfiePhotos.length === 0) return;
+      closeSelfieModal();
+
+      const char = currentStory && (currentStory.characters || []).find(c => c.name === selfieCharName);
+      const desc = char ? (char.summary || char.background || selfieCharName) : selfieCharName;
+
+      document.getElementById('generate-title').textContent = 'Creating ' + selfieCharName + '...';
+      document.getElementById('generate-body').innerHTML = '<div class="generate-loading"><div class="spinner"></div><p style="color:var(--ink-muted);">Uploading your photos...</p></div>';
+      document.getElementById('generate-actions').style.display = 'none';
+      document.getElementById('generate-modal').classList.add('open');
+
+      try {
+        // Upload photos to get public URLs
+        const uploadedUrls = [];
+        for (let i = 0; i < Math.min(selfiePhotos.length, 3); i++) {
+          const res = await fetch(PROXY_BASE + '/api/upload-face', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
+            body: JSON.stringify({ image: selfiePhotos[i] })
+          });
+          const data = await res.json();
+          if (data.url) uploadedUrls.push(data.url);
+        }
+
+        if (uploadedUrls.length === 0) throw new Error('Upload failed');
+
+        document.querySelector('#generate-body .generate-loading p').textContent = 'Generating your portrait...';
+
+        const prompt = 'Use the facial features, bone structure, eyes, nose, and jawline from the ' + uploadedUrls.length + ' reference photo' + (uploadedUrls.length > 1 ? 's' : '') + ' provided. Create a character portrait for ' + selfieCharName + ' — ' + desc + '. Match the face identity closely. Painterly illustration style, warm lighting, detailed, high quality, cinematic portrait.';
+
+        const res2 = await fetch(PROXY_BASE + '/api/imagine', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
+          body: JSON.stringify({ prompt, images: uploadedUrls, n: 3 })
+        });
+        const data2 = await res2.json();
+        const images = data2.images || [];
+
+        if (images.length === 0) throw new Error(data2.error || 'No images returned');
+
+        generateSelectedUrl = images[0];
+        document.getElementById('generate-title').textContent = 'Choose your portrait';
+        document.getElementById('generate-body').innerHTML = '<div class="generate-grid">' +
+          images.map((url, i) => '<div class="generate-option' + (i === 0 ? ' selected' : '') + '" onclick="selectPortrait(this,'' + url + '')"><img src="' + url + '" onerror="this.parentNode.style.display='none'"></div>').join('') +
+          '</div>';
+        document.getElementById('generate-actions').style.display = '';
+
+      } catch(e) {
+        document.getElementById('generate-body').innerHTML = '<div style="padding:32px;text-align:center;"><p style="color:var(--red);"><i class="fa-solid fa-circle-exclamation"></i> ' + e.message + '</p><p style="color:var(--ink-muted);margin-top:8px;font-size:0.85rem;">Try again with clearer photos</p></div>';
+        document.getElementById('generate-actions').style.display = '';
+        document.getElementById('generate-use-btn').style.display = 'none';
+      }
+    }
+
+    function selectPortrait(el, url) {
+      document.querySelectorAll('.generate-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      generateSelectedUrl = url;
+    }
+
+    function closeGenerateModal() {
+      document.getElementById('generate-modal').classList.remove('open');
+      document.getElementById('generate-use-btn').style.display = '';
+      generateSelectedUrl = null;
+    }
+
+    function useSelectedPortrait() {
+      if (!generateSelectedUrl || !selfieCharName) return;
+      customAvatars[selfieCharName] = generateSelectedUrl;
+      closeGenerateModal();
+      // Refresh all character displays
+      renderCharacterList();
+      renderNovelScript();
+      // If on bio screen, refresh it
+      if (document.getElementById('char-bio-screen').classList.contains('active')) {
+        openCharacterBio(selfieCharName);
+      }
+    }
+
+    function getCharAvatar(charName) {
+      if (customAvatars[charName]) return customAvatars[charName];
+      if (!currentStory) return null;
+      const c = (currentStory.characters || []).find(ch => ch.name === charName);
+      return c && c.image ? 'stories/' + c.image : null;
+    }
+
+    /* ── INIT ── */
+    window.addEventListener('DOMContentLoaded', () => { showOnly('home-screen'); loadStories(); });
+  </script>
+
+</body>
+</html>
