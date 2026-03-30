@@ -666,7 +666,7 @@
         const imgSrc = c.image ? `stories/${c.image}` : null;
         const avatarInner = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" onerror="this.parentNode.innerHTML='${c.name[0]}'">` : c.name[0];
         return `<div class="char-item" onclick="openCharacterBio('${c.name.replace(/'/g,"\\'")}')">
-          <div class="char-avatar" style="background:${col}18;color:${col};cursor:pointer;" onclick="event.stopPropagation();openSelfieModal(c.name)" title="Become this character">${avatarInner}</div>
+          <div class="char-avatar" style="background:${col}18;color:${col};cursor:pointer;" onclick="event.stopPropagation();openSelfieModal('${c.name.replace(/'/g,"\\'")}')" title="Become this character">${avatarInner}</div>
           <div class="char-info"><div class="char-name">${c.name}</div>${c.summary ? `<div class="char-summary-short">${c.summary}</div>` : ''}</div>
           ${frac.total > 0 ? `<span class="char-rec-fraction ${fracClass}">${frac.recorded}/${frac.total}</span>` : ''}
         </div>`;
