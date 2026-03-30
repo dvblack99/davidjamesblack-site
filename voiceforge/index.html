@@ -1367,7 +1367,10 @@ Keep it entertaining and suitable for voice performance.`;
         generateSelectedUrl = images[0];
         document.getElementById('generate-title').textContent = 'Choose your portrait';
         document.getElementById('generate-body').innerHTML = '<div class="generate-grid">' +
-          images.map((url, i) => '<div class="generate-option' + (i === 0 ? ' selected' : '') + '" onclick="selectPortrait(this,'' + url + '')"><img src="' + url + '" onerror="this.parentNode.style.display='none'"></div>').join('') +
+          images.map((url, i) => {
+            const sel = i === 0 ? ' selected' : '';
+            return '<div class="generate-option' + sel + '" onclick="selectPortrait(this,\'' + url + '\')"><img src="' + url + '" onerror="this.parentNode.style.display=\'none\'"></div>';
+          }).join('') +
           '</div>';
         document.getElementById('generate-actions').style.display = '';
 
