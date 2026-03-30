@@ -285,7 +285,6 @@
               <input type="number" id="target-words" value="800" min="200" step="100">
               <span>words</span>
             </div>
-            <button class="btn btn-ghost" onclick="showApiKeyModal()"><i class="fa-solid fa-key"></i></button>
             <button class="btn btn-accent" onclick="saveBuilderStory()"><i class="fa-solid fa-download"></i> Save</button>
           </div>
         </div>
@@ -1080,13 +1079,6 @@
       input.value = '';
       renderChatLog();
 
-      if (!anthropicApiKey) {
-        chatHistory.push({ role:'system', content:'Please set your API key first (click the key icon above).' });
-        renderChatLog();
-        showApiKeyModal();
-        return;
-      }
-
       if (!builderStory) initNewBuilderStory();
       builderStory.targetWords = parseInt(document.getElementById('target-words').value) || 800;
 
@@ -1101,9 +1093,9 @@ The JSON must have: title, premise, script (array of {speaker,text}), characters
 Keep it entertaining and suitable for voice performance.`;
 
       try {
-        const res = await fetch('https://api.anthropic.com/v1/messages', {
+        const res = await fetch(PROXY_BASE + '/api/claude', {
           method: 'POST',
-          headers: { 'Content-Type':'application/json', 'x-api-key':anthropicApiKey, 'anthropic-version':'2023-06-01', 'anthropic-dangerous-direct-browser-access':'true' },
+          headers: { 'Content-Type':'application/json', 'X-Proxy-Token': PROXY_TOKEN },
           body: JSON.stringify({
             model: 'claude-sonnet-4-20250514',
             max_tokens: 4096,
