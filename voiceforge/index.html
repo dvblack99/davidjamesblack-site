@@ -1336,8 +1336,8 @@ Keep it entertaining and suitable for voice performance.`;
       document.getElementById('generate-modal').classList.add('open');
 
       try {
-        // Upload photos to get public URLs
-        const uploadedUrls = [];
+        // Upload photos and collect b64 data for direct passing to Grok
+        const uploadedImages = [];
         for (let i = 0; i < Math.min(selfiePhotos.length, 3); i++) {
           const res = await fetch(PROXY_BASE + '/api/upload-face', {
             method: 'POST',
@@ -1345,19 +1345,20 @@ Keep it entertaining and suitable for voice performance.`;
             body: JSON.stringify({ image: selfiePhotos[i] })
           });
           const data = await res.json();
-          if (data.url) uploadedUrls.push(data.url);
+          if (data.b64) uploadedImages.push({ b64: data.b64, mime: data.mime || 'image/jpeg', url: data.url });
+          else if (data.url) uploadedImages.push({ url: data.url });
         }
 
-        if (uploadedUrls.length === 0) throw new Error('Upload failed');
+        if (uploadedImages.length === 0) throw new Error('Upload failed');
 
         document.querySelector('#generate-body .generate-loading p').textContent = 'Generating your portrait...';
 
-        const prompt = 'Use the facial features, bone structure, eyes, nose, and jawline from the ' + uploadedUrls.length + ' reference photo' + (uploadedUrls.length > 1 ? 's' : '') + ' provided. Create a character portrait for ' + selfieCharName + ' — ' + desc + '. Match the face identity closely. Painterly illustration style, warm lighting, detailed, high quality, cinematic portrait.';
+        const prompt = 'Use the facial features, bone structure, eyes, nose, and jawline from the ' + uploadedImages.length + ' reference photo' + (uploadedImages.length > 1 ? 's' : '') + ' provided. Create a character portrait for ' + selfieCharName + ' — ' + desc + '. Match the face identity closely. Painterly illustration style, warm lighting, detailed, high quality, cinematic portrait.';
 
         const res2 = await fetch(PROXY_BASE + '/api/imagine', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
-          body: JSON.stringify({ prompt, images: uploadedUrls, n: 3 })
+          body: JSON.stringify({ prompt, images: uploadedImages, n: 3 })
         });
         const data2 = await res2.json();
         const images = data2.images || [];
