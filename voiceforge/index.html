@@ -1089,7 +1089,7 @@ Keep it entertaining and suitable for voice performance.`;
           method: 'POST',
           headers: { 'Content-Type':'application/json', 'X-Proxy-Token': PROXY_TOKEN },
           body: JSON.stringify({
-            model: 'claude-sonnet-4-20250514',
+            model: 'claude-haiku-4-5-20251001',
             max_tokens: 4096,
             system: systemPrompt,
             messages: [{ role:'user', content:text }]
@@ -1178,7 +1178,7 @@ Keep it entertaining and suitable for voice performance.`;
     }
 
     /* ── SAVE BUILDER STORY ── */
-    function saveBuilderStory() {
+    async function saveBuilderStory() {
       if (!builderStory || !builderStory.script.length) {
         alert('Build some story content first by chatting with the AI.');
         return;
@@ -1192,14 +1192,25 @@ Keep it entertaining and suitable for voice performance.`;
           name: c.name, summary: c.summary || '', voice_notes: c.voice_notes || ''
         }))
       };
-      const blob = new Blob([JSON.stringify(storyToSave, null, 2)], { type:'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url; a.download = (builderStory.title || 'story').toLowerCase().replace(/\s+/g,'-') + '.json';
-      a.click();
-      URL.revokeObjectURL(url);
-      chatHistory.push({ role:'system', content:'Story saved as JSON! Place it in the stories/ folder and reload to use it.' });
+      chatHistory.push({ role:'system', content:'Saving story…' });
       renderChatLog();
+      try {
+        const res = await fetch(PROXY_BASE + '/api/save-story', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
+          body: JSON.stringify(storyToSave)
+        });
+        const data = await res.json();
+        if (data.error) throw new Error(data.error);
+        chatHistory.push({ role:'system', content:'Story saved! Loading it now…' });
+        renderChatLog();
+        // Reload stories list and go home to see it
+        await loadStories();
+        goHome();
+      } catch(e) {
+        chatHistory.push({ role:'system', content:'Save failed: ' + e.message });
+        renderChatLog();
+      }
     }
 
     /* ── SELFIE / CHARACTER PHOTO ── */
