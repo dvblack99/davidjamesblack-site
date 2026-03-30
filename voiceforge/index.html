@@ -178,6 +178,30 @@
 #voice-guidance-section strong { display:block; font-size:0.75rem; font-weight:700; letter-spacing:1px; color:var(--accent); margin-bottom:10px; text-transform:uppercase; }
 #voice-guidance { font-size:0.92rem; line-height:1.65; color:var(--ink-soft); white-space:pre-line; }
 
+/* ── SELFIE / CHARACTER PHOTO ── */
+.selfie-modal { background:var(--surface);border-radius:20px;padding:0;max-width:500px;width:95%;max-height:92vh;overflow:hidden;display:flex;flex-direction:column;box-shadow:var(--shadow-lg);animation:modal-in 0.25s ease-out; }
+.selfie-header { padding:20px 24px 16px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between; }
+.selfie-header h3 { font-family:'EB Garamond',Georgia,serif;font-size:1.3rem;font-weight:500; }
+.selfie-video-wrap { position:relative;background:#000;aspect-ratio:1;overflow:hidden; }
+.selfie-video-wrap video { width:100%;height:100%;object-fit:cover;transform:scaleX(-1); }
+.selfie-shutter { position:absolute;bottom:20px;left:50%;transform:translateX(-50%);width:64px;height:64px;border-radius:50%;background:white;border:4px solid rgba(255,255,255,0.5);cursor:pointer;transition:transform 0.1s; }
+.selfie-shutter:active { transform:translateX(-50%) scale(0.9); }
+.selfie-shutter-inner { width:48px;height:48px;border-radius:50%;background:white;margin:4px;border:2px solid #ccc; }
+.selfie-count { position:absolute;top:12px;right:12px;background:rgba(0,0,0,0.6);color:white;padding:4px 10px;border-radius:20px;font-size:0.8rem;font-weight:600; }
+.selfie-thumbs { display:flex;gap:8px;padding:12px 16px;overflow-x:auto;background:var(--bg); }
+.selfie-thumb { width:60px;height:60px;border-radius:10px;object-fit:cover;cursor:pointer;border:2px solid transparent;flex-shrink:0;transition:border-color 0.15s; }
+.selfie-thumb:hover { border-color:var(--accent); }
+.selfie-thumb-empty { width:60px;height:60px;border-radius:10px;background:var(--bg-warm);border:2px dashed var(--border);flex-shrink:0;display:flex;align-items:center;justify-content:center;color:var(--ink-muted);font-size:1.2rem; }
+.selfie-actions { padding:16px 20px;display:flex;gap:12px;justify-content:flex-end;border-top:1px solid var(--border); }
+.generate-grid { display:grid;grid-template-columns:repeat(3,1fr);gap:12px;padding:16px; }
+.generate-option { border-radius:var(--radius-sm);overflow:hidden;cursor:pointer;border:3px solid transparent;transition:border-color 0.2s;aspect-ratio:1;background:var(--bg-warm); }
+.generate-option:hover { border-color:var(--accent); }
+.generate-option.selected { border-color:var(--accent); }
+.generate-option img { width:100%;height:100%;object-fit:cover; }
+.generate-loading { text-align:center;padding:40px 20px; }
+.generate-loading .spinner { width:48px;height:48px;border:4px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+
 @media (max-width:768px) {
   :root { --header-h:56px; }
   .header { padding:0 16px; } .header-brand { font-size:1.25rem;gap:10px; } .header-brand i { font-size:1.1rem; }
@@ -378,7 +402,51 @@
     <img id="lightbox-img" src="" alt="" style="max-width:90vw;max-height:90vh;border-radius:var(--radius);box-shadow:var(--shadow-lg);object-fit:contain;animation:modal-in 0.25s ease-out;">
   </div>
 
+  <!-- SELFIE / CHARACTER PHOTO MODAL -->
+
+  <div class="modal-overlay" id="selfie-modal">
+    <div class="selfie-modal">
+      <div class="selfie-header">
+        <h3 id="selfie-char-name">Become this character</h3>
+        <button class="btn-icon" onclick="closeSelfieModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div class="selfie-video-wrap" id="selfie-video-wrap">
+        <video id="selfie-video" autoplay playsinline muted></video>
+        <div class="selfie-count" id="selfie-count">0 / 5</div>
+        <button class="selfie-shutter" id="selfie-shutter" onclick="takePhoto()"><div class="selfie-shutter-inner"></div></button>
+      </div>
+      <div class="selfie-thumbs" id="selfie-thumbs"></div>
+      <div class="selfie-actions">
+        <button class="btn btn-ghost" onclick="closeSelfieModal()">Cancel</button>
+        <button class="btn btn-accent" id="selfie-save-btn" onclick="generateCharacterPhoto()" disabled><i class="fa-solid fa-wand-magic-sparkles"></i> Generate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- GENERATE RESULTS MODAL -->
+
+  <div class="modal-overlay" id="generate-modal">
+    <div class="selfie-modal">
+      <div class="selfie-header">
+        <h3 id="generate-title">Choose your portrait</h3>
+        <button class="btn-icon" onclick="closeGenerateModal()"><i class="fa-solid fa-xmark"></i></button>
+      </div>
+      <div id="generate-body">
+        <div class="generate-loading">
+          <div class="spinner"></div>
+          <p style="color:var(--ink-muted);">Creating your character portrait…</p>
+          <p style="color:var(--ink-muted);font-size:0.8rem;margin-top:8px;">This takes about 30 seconds</p>
+        </div>
+      </div>
+      <div class="selfie-actions" id="generate-actions" style="display:none;">
+        <button class="btn btn-ghost" onclick="closeGenerateModal()">Cancel</button>
+        <button class="btn btn-accent" id="generate-use-btn" onclick="useSelectedPortrait()"><i class="fa-solid fa-check"></i> Use This</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+
     /* ── STATE ── */
     let currentStory = null, stories = [], recordings = {};
     let isPlaying = false, currentLineIndex = 0, currentWordIndex = 0;
@@ -386,6 +454,7 @@
     let mediaRecorder = null, audioChunks = [];
     let pendingRecBlock = null, activeRecBlock = null, currentPlaybackAudio = null;
     let pendingProcessedUrl = null, pendingCompareBlock = null;
+    let customAvatars = {};
 
     const characterColors = {
       Narrator:'#6b5b4e', Margaret:'#9f1239', Josip:'#166534',
@@ -395,6 +464,7 @@
     function charColor(n) { return characterColors[n] || '#5c4d3e'; }
 
     function getCharImage(speakerName) {
+      if (customAvatars && customAvatars[speakerName]) return customAvatars[speakerName];
       if (!currentStory) return null;
       const c = (currentStory.characters || []).find(ch => ch.name === speakerName);
       if (c && c.image) return `stories/${c.image}`;
@@ -586,7 +656,7 @@
         const imgSrc = c.image ? `stories/${c.image}` : null;
         const avatarInner = imgSrc ? `<img src="${imgSrc}" alt="${c.name}" onerror="this.parentNode.innerHTML='${c.name[0]}'">` : c.name[0];
         return `<div class="char-item" onclick="openCharacterBio('${c.name.replace(/'/g,"\\'")}')">
-          <div class="char-avatar" style="background:${col}18;color:${col}">${avatarInner}</div>
+          <div class="char-avatar" style="background:${col}18;color:${col};cursor:pointer;" onclick="event.stopPropagation();openSelfieModal(c.name)" title="Become this character">${avatarInner}</div>
           <div class="char-info"><div class="char-name">${c.name}</div>${c.summary ? `<div class="char-summary-short">${c.summary}</div>` : ''}</div>
           ${frac.total > 0 ? `<span class="char-rec-fraction ${fracClass}">${frac.recorded}/${frac.total}</span>` : ''}
         </div>`;
@@ -604,8 +674,9 @@
       const col = charColor(name);
       const displayName = char.full_name || name;
       const lineCount = allLines.filter(l => l.speaker === name).length;
+      const avatarSrc = getCharAvatar(name);
       let html = `<div class="bio-hero"><div class="bio-hero-top">
-        <div class="bio-avatar" style="background:${col}18;color:${col};${char.image?'cursor:zoom-in;':''}" ${char.image?`onclick="openLightbox('stories/${char.image}')"`:''}>${char.image ? `<img src="stories/${char.image}" alt="${displayName}" onerror="this.parentNode.innerHTML='${displayName[0]}';this.parentNode.style.cursor='default';">` : displayName[0]}</div>
+        <div class="bio-avatar" style="background:${col}18;color:${col};cursor:pointer;position:relative;" onclick="openSelfieModal('${name}')" title="Tap to become this character">${avatarSrc ? `<img src="${avatarSrc}" alt="${displayName}" onerror="this.parentNode.innerHTML='${displayName[0]}'">` : displayName[0]}<div style="position:absolute;bottom:4px;right:4px;background:var(--accent);border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;"><i class="fa-solid fa-camera" style="color:white;font-size:0.6rem;"></i></div></div>
         <div><h2>${displayName}</h2>${char.summary ? `<p class="bio-tagline">${char.summary}</p>` : ''}</div>
       </div><p style="font-size:0.85rem;color:var(--ink-muted);">${lineCount} line${lineCount!==1?'s':''} in the script</p></div>`;
       const sections = [
@@ -1159,6 +1230,174 @@ Keep it entertaining and suitable for voice performance.`;
       URL.revokeObjectURL(url);
       chatHistory.push({ role:'system', content:'Story saved as JSON! Place it in the stories/ folder and reload to use it.' });
       renderChatLog();
+    }
+
+    /* ── SELFIE / CHARACTER PHOTO ── */
+    const PROXY_TOKEN = 'Lindsey123!';
+    const PROXY_BASE = '';
+    let selfieStream = null;
+    let selfiePhotos = []; // array of base64 data URLs
+    let selfieCharName = null;
+    let selfieRetakeIndex = null;
+    let generateSelectedUrl = null;
+
+    function openSelfieModal(charName) {
+      selfieCharName = charName;
+      selfiePhotos = [];
+      selfieRetakeIndex = null;
+      document.getElementById('selfie-char-name').textContent = 'Become ' + charName;
+      document.getElementById('selfie-count').textContent = '0 / 5';
+      document.getElementById('selfie-save-btn').disabled = true;
+      renderSelfieThumbsUI();
+      document.getElementById('selfie-modal').classList.add('open');
+      startSelfieCamera();
+    }
+
+    function closeSelfieModal() {
+      stopSelfieCamera();
+      document.getElementById('selfie-modal').classList.remove('open');
+    }
+
+    async function startSelfieCamera() {
+      try {
+        selfieStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: 640, height: 640 }, audio: false });
+        document.getElementById('selfie-video').srcObject = selfieStream;
+      } catch(e) {
+        alert('Camera access needed to take photos.');
+        closeSelfieModal();
+      }
+    }
+
+    function stopSelfieCamera() {
+      if (selfieStream) { selfieStream.getTracks().forEach(t => t.stop()); selfieStream = null; }
+      const v = document.getElementById('selfie-video');
+      v.srcObject = null;
+    }
+
+    function takePhoto() {
+      const video = document.getElementById('selfie-video');
+      if (!video.srcObject) return;
+      const canvas = document.createElement('canvas');
+      canvas.width = 640; canvas.height = 640;
+      const ctx = canvas.getContext('2d');
+      ctx.save();
+      ctx.scale(-1, 1);
+      ctx.drawImage(video, -640, 0, 640, 640);
+      ctx.restore();
+      const dataUrl = canvas.toDataURL('image/jpeg', 0.85);
+      if (selfieRetakeIndex !== null) {
+        selfiePhotos[selfieRetakeIndex] = dataUrl;
+        selfieRetakeIndex = null;
+      } else if (selfiePhotos.length < 5) {
+        selfiePhotos.push(dataUrl);
+      }
+      document.getElementById('selfie-count').textContent = selfiePhotos.length + ' / 5';
+      document.getElementById('selfie-save-btn').disabled = selfiePhotos.length === 0;
+      renderSelfieThumbsUI();
+    }
+
+    function renderSelfieThumbsUI() {
+      const container = document.getElementById('selfie-thumbs');
+      let html = '';
+      for (let i = 0; i < 5; i++) {
+        if (selfiePhotos[i]) {
+          html += '<img class="selfie-thumb" src="' + selfiePhotos[i] + '" onclick="retakePhoto(' + i + ')" title="Tap to retake">';
+        } else {
+          html += '<div class="selfie-thumb-empty"><i class="fa-solid fa-camera"></i></div>';
+        }
+      }
+      container.innerHTML = html;
+    }
+
+    function retakePhoto(index) {
+      selfieRetakeIndex = index;
+    }
+
+    async function generateCharacterPhoto() {
+      if (selfiePhotos.length === 0) return;
+      closeSelfieModal();
+
+      const char = currentStory && (currentStory.characters || []).find(c => c.name === selfieCharName);
+      const desc = char ? (char.summary || char.background || selfieCharName) : selfieCharName;
+
+      document.getElementById('generate-title').textContent = 'Creating ' + selfieCharName + '...';
+      document.getElementById('generate-body').innerHTML = '<div class="generate-loading"><div class="spinner"></div><p style="color:var(--ink-muted);">Uploading your photos...</p></div>';
+      document.getElementById('generate-actions').style.display = 'none';
+      document.getElementById('generate-modal').classList.add('open');
+
+      try {
+        // Upload photos to get public URLs
+        const uploadedUrls = [];
+        for (let i = 0; i < Math.min(selfiePhotos.length, 3); i++) {
+          const res = await fetch(PROXY_BASE + '/api/upload-face', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
+            body: JSON.stringify({ image: selfiePhotos[i] })
+          });
+          const data = await res.json();
+          if (data.url) uploadedUrls.push(data.url);
+        }
+
+        if (uploadedUrls.length === 0) throw new Error('Upload failed');
+
+        document.querySelector('#generate-body .generate-loading p').textContent = 'Generating your portrait...';
+
+        const prompt = 'Use the facial features, bone structure, eyes, nose, and jawline from the ' + uploadedUrls.length + ' reference photo' + (uploadedUrls.length > 1 ? 's' : '') + ' provided. Create a character portrait for ' + selfieCharName + ' — ' + desc + '. Match the face identity closely. Painterly illustration style, warm lighting, detailed, high quality, cinematic portrait.';
+
+        const res2 = await fetch(PROXY_BASE + '/api/imagine', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'X-Proxy-Token': PROXY_TOKEN },
+          body: JSON.stringify({ prompt, images: uploadedUrls, n: 3 })
+        });
+        const data2 = await res2.json();
+        const images = data2.images || [];
+
+        if (images.length === 0) throw new Error(data2.error || 'No images returned');
+
+        generateSelectedUrl = images[0];
+        document.getElementById('generate-title').textContent = 'Choose your portrait';
+        document.getElementById('generate-body').innerHTML = '<div class="generate-grid">' +
+          images.map((url, i) => '<div class="generate-option' + (i === 0 ? ' selected' : '') + '" onclick="selectPortrait(this,'' + url + '')"><img src="' + url + '" onerror="this.parentNode.style.display='none'"></div>').join('') +
+          '</div>';
+        document.getElementById('generate-actions').style.display = '';
+
+      } catch(e) {
+        document.getElementById('generate-body').innerHTML = '<div style="padding:32px;text-align:center;"><p style="color:var(--red);"><i class="fa-solid fa-circle-exclamation"></i> ' + e.message + '</p><p style="color:var(--ink-muted);margin-top:8px;font-size:0.85rem;">Try again with clearer photos</p></div>';
+        document.getElementById('generate-actions').style.display = '';
+        document.getElementById('generate-use-btn').style.display = 'none';
+      }
+    }
+
+    function selectPortrait(el, url) {
+      document.querySelectorAll('.generate-option').forEach(o => o.classList.remove('selected'));
+      el.classList.add('selected');
+      generateSelectedUrl = url;
+    }
+
+    function closeGenerateModal() {
+      document.getElementById('generate-modal').classList.remove('open');
+      document.getElementById('generate-use-btn').style.display = '';
+      generateSelectedUrl = null;
+    }
+
+    function useSelectedPortrait() {
+      if (!generateSelectedUrl || !selfieCharName) return;
+      customAvatars[selfieCharName] = generateSelectedUrl;
+      closeGenerateModal();
+      // Refresh all character displays
+      renderCharacterList();
+      renderNovelScript();
+      // If on bio screen, refresh it
+      if (document.getElementById('char-bio-screen').classList.contains('active')) {
+        openCharacterBio(selfieCharName);
+      }
+    }
+
+    function getCharAvatar(charName) {
+      if (customAvatars[charName]) return customAvatars[charName];
+      if (!currentStory) return null;
+      const c = (currentStory.characters || []).find(ch => ch.name === charName);
+      return c && c.image ? 'stories/' + c.image : null;
     }
 
     /* ── INIT ── */
