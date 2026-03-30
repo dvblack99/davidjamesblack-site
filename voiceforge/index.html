@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>VoiceForge • Hidden Histories</title>
+  <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+  <meta http-equiv="Pragma" content="no-cache">
   <meta name="description" content="Record yourself performing classic stories with family and friends. A collaborative audio fiction experience.">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css">
   <style>
@@ -474,22 +476,30 @@
     /* ── STORIES ── */
     async function loadStories() {
       stories = [];
-      // Try manifest first, then fall back to known files
+      const el = document.getElementById('project-list');
       try {
         const manifest = await fetch('stories/stories-index.json');
         if (manifest.ok) {
           const files = await manifest.json();
           for (const f of files) {
-            try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
+            try {
+              const r = await fetch('stories/' + f);
+              if (r.ok) stories.push(await r.json());
+            } catch(e) {
+              console.error('Failed to load story', f, e);
+            }
           }
           renderProjectList();
           return;
         }
-      } catch(e) {}
-      // Fallback: try known files
+      } catch(e) {
+        if (el) el.innerHTML = '<p style="color:red;text-align:center;padding:20px;">Manifest error: ' + e.message + '</p>';
+        console.error('Manifest error:', e);
+      }
+      // Fallback
       const knownFiles = ['poured-in-place.json', 'signal-hill.json'];
       for (const f of knownFiles) {
-        try { const r = await fetch(`stories/${f}`); if (r.ok) stories.push(await r.json()); } catch(e) {}
+        try { const r = await fetch('stories/' + f); if (r.ok) stories.push(await r.json()); } catch(e) {}
       }
       renderProjectList();
     }
